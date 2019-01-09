@@ -1,0 +1,41 @@
+{
+  "name": "phone-fly",
+  "description": "",
+  "author": {
+    "name": "Jure Sotosek",
+    "url": "https://www.github.com/juresotosek"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "yarn build && yarn now-start",
+    "now-start": "serve --single ./dist",
+    "dev": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "build": "webpack --config ./webpack.config.js --mode production"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.2.9",
+    "apollo-client": "^2.4.1",
+    "apollo-link": "^1.2.2",
+    "apollo-link-http": "^1.5.4",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "react": "^16.4.1",
+    "react-apollo": "^2.1.11",
+    "react-dom": "^16.4.1",
+    "serve": "10.0.0",
+    "styled-components": "^3.4.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.2",
+    "babel-plugin-styled-components": "^1.5.1",
+    "react-hot-loader": "^4.3.3",
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8",
+    "webpack-dev-server": "^3.1.4"
+  }
+}
