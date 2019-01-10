@@ -9,6 +9,8 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 
 import IndexPage from "./pages/index";
+import PlayPage from "./pages/play";
+import SharePage from "./pages/share";
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,6 +26,8 @@ const App = () => (
   //<ApolloProvider client={client}>
   <BrowserRouter>
     <Switch>
+      <Route path="/play" component={PlayPage} />
+      <Route path="/share" component={SharePage} />
       <Route path="/" component={IndexPage} />
     </Switch>
   </BrowserRouter>
