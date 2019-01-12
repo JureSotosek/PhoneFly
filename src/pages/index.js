@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react'
 
 const Index = ({ history }) => (
   <div>
     <div>Phone Fly</div>
     <div>
-      <button onClick={() => history.push("play")}>PLAY</button>
+      <button onClick={() => history.push('play')}>PLAY</button>
     </div>
     <div>
       <button>INVITE</button>
@@ -16,6 +16,6 @@ const Index = ({ history }) => (
     <div>3. Ajda 1m</div>
     <div>4. Tela 0.5m</div>
   </div>
-);
+)
 
-export default Index;
+export default Index

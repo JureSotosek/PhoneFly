@@ -1,13 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
-import styled from "styled-components";
+import styled from 'styled-components'
 
-import IndexPage from "./pages/index";
-import PlayPage from "./pages/play";
-import SharePage from "./pages/share";
+import IndexPage from './pages/index'
+import PlayPage from './pages/play'
+import SharePage from './pages/share'
 
 const Wrapper = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   padding: 10px;
 
   font-family: Source Sans Pro;
-`;
+`
 
 const App = () => (
   <BrowserRouter>
@@ -27,8 +27,8 @@ const App = () => (
       <Route path="/" component={IndexPage} />
     </Switch>
   </BrowserRouter>
-);
+)
 
-ReactDOM.render(<App />, document.getElementById("app"));
+ReactDOM.render(<App />, document.getElementById('app'))
 
-module.hot.accept();
+module.hot.accept()

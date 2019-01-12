@@ -1,50 +1,50 @@
-import React from "react";
+import React from 'react'
 
 class Play extends React.Component {
   constructor() {
-    super();
+    super()
 
     this.state = {
       startedFallingAt: null,
       highestFallLasted: null,
-      fallInProgress: false
-    };
+      fallInProgress: false,
+    }
 
-    this.handleAccelerometer = this.handleAccelerometer.bind(this);
+    this.handleAccelerometer = this.handleAccelerometer.bind(this)
   }
 
   componentDidMount() {
-    window.addEventListener("devicemotion", this.handleAccelerometer, true);
+    window.addEventListener('devicemotion', this.handleAccelerometer, true)
   }
 
   componentWillUnmount() {
-    window.removeEventListener("devicemotion", this.handleAccelerometer, true);
+    window.removeEventListener('devicemotion', this.handleAccelerometer, true)
   }
 
   handleAccelerometer(event) {
-    const { startedFallingAt, highestFallLasted } = this.state;
-    const { x, y, z } = event.accelerationIncludingGravity;
+    const { startedFallingAt, highestFallLasted } = this.state
+    const { x, y, z } = event.accelerationIncludingGravity
 
-    const acceleration = (x ** 2 + y ** 2 + z ** 2) ** 0.5;
+    const acceleration = (x ** 2 + y ** 2 + z ** 2) ** 0.5
 
     if (acceleration < 2 && !startedFallingAt) {
-      this.setState({ startedFallingAt: new Date() });
+      this.setState({ startedFallingAt: new Date() })
     } else if (acceleration > 2 && startedFallingAt) {
-      const fallLasted = new Date() - startedFallingAt;
+      const fallLasted = new Date() - startedFallingAt
       if (fallLasted > highestFallLasted) {
         this.setState({
-          highestFallLasted: fallLasted
-        });
+          highestFallLasted: fallLasted,
+        })
       }
-      this.setState({ startedFallingAt: null });
+      this.setState({ startedFallingAt: null })
     }
   }
 
   render() {
-    const { highestFallLasted } = this.state;
-    const { history } = this.props;
+    const { highestFallLasted } = this.state
+    const { history } = this.props
 
-    const height = (9.81 * (highestFallLasted / 2000) ** 2) / 2;
+    const height = (9.81 * (highestFallLasted / 2000) ** 2) / 2
 
     return (
       <div>
@@ -53,11 +53,11 @@ class Play extends React.Component {
           <button onClick={() => this.setState({ highestFallLasted: null })}>
             RESET
           </button>
-          <button onClick={() => history.push("")}>BACK</button>
+          <button onClick={() => history.push('')}>BACK</button>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Play;
+export default Play
