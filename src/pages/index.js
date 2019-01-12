@@ -4,8 +4,10 @@ const Index = ({ history }) => (
   <div>
     <div>Phone Fly</div>
     <div>
-      <button onClick={() => history.push("play")}>Play</button>
-      <button onClick={() => history.push("share")}>Share/Challange</button>
+      <button onClick={() => history.push("play")}>PLAY</button>
+    </div>
+    <div>
+      <button>INVITE</button>
     </div>
     <div>High score: 000</div>
     <div>Leaderboard:</div>

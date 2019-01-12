@@ -3,9 +3,6 @@ import ReactDOM from "react-dom";
 
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-// import { ApolloProvider } from "react-apollo";
-// import client from "./lib/graphql/apolloClient";
-
 import styled from "styled-components";
 
 import IndexPage from "./pages/index";
@@ -23,7 +20,6 @@ const Wrapper = styled.div`
 `;
 
 const App = () => (
-  //<ApolloProvider client={client}>
   <BrowserRouter>
     <Switch>
       <Route path="/play" component={PlayPage} />
@@ -31,7 +27,6 @@ const App = () => (
       <Route path="/" component={IndexPage} />
     </Switch>
   </BrowserRouter>
-  //</ApolloProvider>
 );
 
 ReactDOM.render(<App />, document.getElementById("app"));

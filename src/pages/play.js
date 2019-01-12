@@ -48,12 +48,12 @@ class Play extends React.Component {
 
     return (
       <div>
-        <div>Height/Score: {height}m</div>
+        <div>Height/Score: {height.toFixed(2)}m</div>
         <div>
           <button onClick={() => this.setState({ highestFallLasted: null })}>
-            New Throw
+            RESET
           </button>
-          <button onClick={() => history.push("share")}>Share/Challange</button>
+          <button onClick={() => history.push("")}>BACK</button>
         </div>
       </div>
     );
