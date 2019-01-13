@@ -1,13 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { MemoryRouter, Route, Switch } from 'react-router-dom'
 
 import styled from 'styled-components'
 
 import IndexPage from './pages/index'
 import PlayPage from './pages/play'
-import SharePage from './pages/share'
 
 const Wrapper = styled.div`
   display: flex;
@@ -20,15 +19,18 @@ const Wrapper = styled.div`
 `
 
 const App = () => (
-  <BrowserRouter>
+  <MemoryRouter>
     <Switch>
       <Route path="/play" component={PlayPage} />
-      <Route path="/share" component={SharePage} />
       <Route path="/" component={IndexPage} />
     </Switch>
-  </BrowserRouter>
+  </MemoryRouter>
 )
 
-ReactDOM.render(<App />, document.getElementById('app'))
+const app: ?Element = document.getElementById('app')
+
+if (app != null) {
+  ReactDOM.render(<App />, app)
+}
 
 module.hot.accept()

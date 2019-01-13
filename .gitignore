@@ -3,6 +3,7 @@
 
 # production
 /dist/bundle.js
+dist.zip
 
 # misc
 .DS_Store

@@ -1,7 +1,11 @@
 {
   "presets": [
     ["@babel/preset-env", { "targets": "> 0.25%, not dead" }],
-    "@babel/preset-react"
+    "@babel/preset-react",
+    "@babel/preset-flow"
   ],
-  "plugins": ["styled-components"]
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    "styled-components"
+  ]
 }

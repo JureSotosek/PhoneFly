@@ -1,6 +1,11 @@
 import React from 'react'
+import type { RouterHistory } from 'react-router-dom'
 
-const Index = ({ history }) => (
+type Props = {
+  history: RouterHistory,
+}
+
+const Index = ({ history }: Props) => (
   <div>
     <div>Phone Fly</div>
     <div>
