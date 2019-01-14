@@ -1,27 +1,57 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>PhoneFly</title>
 
-<head>
-  <title>PhoneFly</title>
-  <script src="https://connect.facebook.net/en_US/fbinstant.6.2.js"></script>
-</head>
+    <script src="https://connect.facebook.net/en_US/fbinstant.6.2.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Capriola" rel="stylesheet">
+  </head>
 
-<body>
-  <div id="app"></div>
-  <script>
-    FBInstant.initializeAsync().then(() => {
-      FBInstant.setLoadingProgress(50);
+  <body>
+    <div id="app"></div>
+    <script>
+      if (true) {
+        const loadAsset = asset => {
+        return new Promise((resolve, reject) => {
+          const src = 'assets/' + asset + '.png'
 
-      const bundle = document.createElement('script');
-      bundle.src = "bundle.js";
-      document.body.appendChild(bundle);
+          const canvas = document.createElement('canvas')
+          const img = document.createElement('img')
+          img.onload = () => {
+            canvas.width = img.width
+            canvas.height = img.height
+            canvas.getContext('2d').drawImage(img, 0, 0)
+            const dataURL = canvas.toDataURL('image/png')
+            const base64 = dataURL.replace(/^data:image\/png;base64,/, '')
+            resolve(dataURL)
+          }
+          img.src = src
+        })
+      }
 
-      FBInstant.setLoadingProgress(100);
-      FBInstant.startGameAsync()
-    }).catch(err => {
-        console.log(err)
-    });
-</script>
-</body>
+      FBInstant.initializeAsync()
+        .then(async () => {
+          const assetsToDownload = ['IndexBanner']
+          const assets = {}
 
+          for (index in assetsToDownload) {
+            const asset = assetsToDownload[index]
+            myAssets[asset] = await loadAsset(asset)
+          }
+
+          window.assets = assets
+
+          const bundle = document.createElement('script')
+          bundle.src = 'bundle.js'
+          document.body.appendChild(bundle)
+
+          FBInstant.startGameAsync()
+        })
+      }else{
+          const bundle = document.createElement('script')
+          bundle.src = 'bundle.js'
+          document.body.appendChild(bundle)
+      }
+    </script>
+  </body>
 </html>

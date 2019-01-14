@@ -1,13 +1,25 @@
 const webpack = require('webpack')
 
 module.exports = {
-  entry: './src/indexDev.js',
+  entry: './src/index.js',
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: ['babel-loader'],
+      },
+      {
+        test: /\.(png|jp(e*)g|svg)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8000,
+              name: 'images/[hash]-[name].[ext]',
+            },
+          },
+        ],
       },
     ],
   },

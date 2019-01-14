@@ -1,6 +1,6 @@
 {
   "name": "phone-fly",
-  "description": "",
+  "description": "How high can you throw your phone?",
   "author": {
     "name": "Jure Sotosek",
     "url": "https://www.github.com/juresotosek"
@@ -25,9 +25,11 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.2",
     "babel-plugin-styled-components": "^1.5.1",
+    "file-loader": "^3.0.1",
     "flow-bin": "^0.90.0",
     "flow-typed": "^2.5.1",
     "react-hot-loader": "^4.3.3",
+    "url-loader": "^1.1.2",
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4"

@@ -1,8 +1,12 @@
 import React from 'react'
 import type { RouterHistory } from 'react-router-dom'
 
+import styled from 'styled-components'
+
 type Props = {
   history: RouterHistory,
+  assets: any,
+  FBInstant: any,
 }
 
 type State = {
