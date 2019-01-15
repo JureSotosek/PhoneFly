@@ -31,12 +31,12 @@
 
       FBInstant.initializeAsync()
         .then(async () => {
-          const assetsToDownload = ['IndexBanner']
+          const assetsToDownload = ['IndexBanner', 'PlayBanner', 'Jure', 'Ajda', 'Matic', 'Lovro', 'Tela']
           const assets = {}
 
           for (index in assetsToDownload) {
             const asset = assetsToDownload[index]
-            myAssets[asset] = await loadAsset(asset)
+            assets[asset] = await loadAsset(asset)
           }
 
           window.assets = assets
