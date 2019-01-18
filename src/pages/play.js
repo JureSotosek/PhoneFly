@@ -2,6 +2,7 @@ import React from 'react'
 import type { RouterHistory } from 'react-router-dom'
 
 import styled from 'styled-components'
+import Button from '../components/button'
 
 const Wrapper = styled.div`
   position: fixed;
@@ -65,37 +66,9 @@ const ButtonsWrapper = styled.div`
   justify-content: space-around;
 `
 
-const ResetButton = styled.div`
-  border: none;
-
-  width: 45%;
-  height: 16vw;
-  border-radius: 4vw;
-  box-shadow: 0.3vw 0.3vw 1vw #d6d6d6;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const BlackButton = styled(Button)`
   background-color: black;
   color: white;
-  font-size: 8vw;
-  font-family: 'Capriola';
-`
-
-const BackButton = styled.div`
-  border: none;
-
-  width: 45%;
-  height: 16vw;
-  border-radius: 4vw;
-  box-shadow: 0.3vw 0.3vw 1vw #d6d6d6;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  font-size: 8vw;
-  font-family: 'Capriola';
 `
 
 const ScoreWrapper = styled.div`
@@ -129,20 +102,9 @@ const BestScore = styled.div`
   font-family: 'Capriola';
 `
 
-const ShareButton = styled.div`
-  border: none;
-
+const ShareButton = styled(Button)`
   width: 80%;
-  height: 16vw;
-  border-radius: 4vw;
-  box-shadow: 0.3vw 0.3vw 1vw #d6d6d6;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
   font-size: 6vw;
-  font-family: 'Capriola';
 `
 
 type Props = {
@@ -155,7 +117,7 @@ type State = {
   startedFallingAt: ?Date,
   highestFallLasted: number,
   bestScore: number,
-  lastRecordedValue: Date,
+  prompt: string,
 }
 
 class Play extends React.Component<Props, State> {
@@ -166,7 +128,7 @@ class Play extends React.Component<Props, State> {
       startedFallingAt: null,
       highestFallLasted: 0,
       bestScore: 0,
-      lastRecordedValue: new Date(),
+      prompt: 'How high can you throw your phone?',
     }
   }
 
@@ -184,18 +146,21 @@ class Play extends React.Component<Props, State> {
   }
 
   handleAccelerometer: (event: any) => void = event => {
-    const {
-      startedFallingAt,
-      lastRecordedValue,
-      highestFallLasted,
-      bestScore,
-    } = this.state
+    const { startedFallingAt, highestFallLasted, bestScore } = this.state
     const { FBInstant } = this.props
-    const { x, y, z } = event.accelerationIncludingGravity
-    const { alpha, beta, gamma } = event.rotationRate
+
+    const {
+      x,
+      y,
+      z,
+    }: { x: number, y: number, z: number } = event.accelerationIncludingGravity
+    const {
+      alpha,
+      beta,
+      gamma,
+    }: { alpha: number, beta: number, gamma: number } = event.rotationRate
 
     const acceleration = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
-
     const beta2 = Math.pow(beta, 2)
     const gamma2 = Math.pow(gamma, 2)
     const rotation = z < 5 && (beta2 > 40000 || gamma2 > 40000)
@@ -204,29 +169,22 @@ class Play extends React.Component<Props, State> {
       this.setState({ startedFallingAt: new Date() })
     } else if (!acceleration && !rotation && startedFallingAt != null) {
       const fallLasted = new Date() - startedFallingAt
-      const fromLastRecordedValue = new Date() - lastRecordedValue
-      if (
-        highestFallLasted === null ||
-        fallLasted > highestFallLasted ||
-        fromLastRecordedValue > 500
-      ) {
+
+      if (highestFallLasted === null || fallLasted > highestFallLasted) {
         this.setState({
           highestFallLasted: fallLasted,
         })
 
         const height = (9.81 * (fallLasted / 2000) ** 2) / 2
-        const heightRounded = Math.round(height * 100) / 100
-        if (bestScore < heightRounded) {
-          this.setState({ bestScore: heightRounded })
-        }
+        const heightRounded = parseInt(height * 100) / 100
 
-        if (FBInstant != null) {
+        if (bestScore < heightRounded && FBInstant != null) {
           this.setBestScore(heightRounded)
         }
       }
+
       this.setState({ startedFallingAt: null })
     }
-    this.setState({ lastRecordedValue: new Date() })
   }
 
   getBestScore: () => void = () => {
@@ -245,11 +203,12 @@ class Play extends React.Component<Props, State> {
   }
 
   setBestScore: number => void = (score: number) => {
+    const { prompt } = this.state
     const { FBInstant } = this.props
 
     FBInstant.getLeaderboardAsync('score')
       .then(leaderboard => {
-        return leaderboard.setScoreAsync(Math.round(score * 100))
+        return leaderboard.setScoreAsync(parseInt(score * 100))
       })
       .then(entry => {
         this.getBestScore()
@@ -257,32 +216,33 @@ class Play extends React.Component<Props, State> {
   }
 
   render() {
-    const { highestFallLasted, bestScore } = this.state
+    const { highestFallLasted, bestScore, prompt } = this.state
     const { history, assets = {} } = this.props
 
-    const height = ((9.81 * (highestFallLasted / 2000) ** 2) / 2).toFixed(2)
+    const height = (9.81 * (highestFallLasted / 2000) ** 2) / 2
+    const heightRounded = parseInt(height * 100) / 100
 
     return (
       <Wrapper>
         <TopWrapper>
-          <Prompt>How high can you throw you phone?</Prompt>{' '}
+          <Prompt>{prompt}</Prompt>
           <Banner src={assets.PlayBanner} alt="PhoneFly" />
         </TopWrapper>
         <BottomWrapper>
           <ScoreWrapper>
-            <CurrentScore>Score: {height}m</CurrentScore>
+            <CurrentScore>Score: {heightRounded}m</CurrentScore>
             <BestScoreWrapper>
               <BestScore>Best: {bestScore}m</BestScore>
               <ShareButton>SHARE</ShareButton>
             </BestScoreWrapper>
           </ScoreWrapper>
           <ButtonsWrapper>
-            <ResetButton
+            <BlackButton
               onClick={() => this.setState({ highestFallLasted: 0 })}
             >
               RESET
-            </ResetButton>
-            <BackButton onClick={() => history.push('')}>BACK</BackButton>
+            </BlackButton>
+            <Button onClick={() => history.push('')}>BACK</Button>
           </ButtonsWrapper>
         </BottomWrapper>
       </Wrapper>

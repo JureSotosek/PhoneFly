@@ -1,9 +1,10 @@
 import React from 'react'
 import type { RouterHistory } from 'react-router-dom'
 
-import Leaderboard from '../containers/Leaderboard'
-
 import styled from 'styled-components'
+import Button from '../components/button'
+
+import Leaderboard from '../containers/Leaderboard'
 
 const Wrapper = styled.div`
   top: 0;
@@ -26,37 +27,9 @@ const ButtonsWrapper = styled.div`
   justify-content: space-around;
 `
 
-const PlayButton = styled.div`
-  border: none;
-
-  width: 45%;
-  height: 16vw;
-  border-radius: 4vw;
-  box-shadow: 0.3vw 0.3vw 1vw #d6d6d6;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const BlackButton = styled(Button)`
   background-color: black;
   color: white;
-  font-size: 8vw;
-  font-family: 'Capriola';
-`
-
-const InviteButton = styled.div`
-  border: none;
-
-  width: 45%;
-  height: 16vw;
-  border-radius: 4vw;
-  box-shadow: 0.3vw 0.3vw 1vw #d6d6d6;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  font-size: 8vw;
-  font-family: 'Capriola';
 `
 
 const LeaderboardTitle = styled.div`
@@ -75,8 +48,8 @@ const Index = ({ history, assets = {}, FBInstant }: Props) => (
   <Wrapper>
     <Banner src={assets.IndexBanner} alt="PhoneFly" />
     <ButtonsWrapper>
-      <PlayButton onClick={() => history.push('play')}>PLAY</PlayButton>
-      <InviteButton>INVITE</InviteButton>
+      <BlackButton onClick={() => history.push('play')}>PLAY</BlackButton>
+      <Button>INVITE</Button>
     </ButtonsWrapper>
     <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
     <Leaderboard FBInstant={FBInstant} />

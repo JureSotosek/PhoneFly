@@ -30,6 +30,10 @@ const LeaderboardCard = styled.div`
 const MeLeaderboardCard = styled(LeaderboardCard)`
   box-shadow: 0 0 2vw #f5a623;
 `
+const LoadingLeaderboardCard = styled(LeaderboardCard)`
+  justify-content: center;
+  font-size: 5vw;
+`
 
 const HorizontalDivider = styled.div`
   width: 60%;
@@ -87,6 +91,8 @@ type Props = {
 type State = {
   meEntry: ?Entry,
   entries: ?(Entry[]),
+  loadingMeEntry: boolean,
+  loadingEntries: boolean,
 }
 
 class Leaderboard extends React.Component<Props, State> {
@@ -96,6 +102,8 @@ class Leaderboard extends React.Component<Props, State> {
     this.state = {
       meEntry: null,
       entries: null,
+      loadingMeEntry: false,
+      loadingEntries: false,
     }
   }
 
@@ -106,6 +114,8 @@ class Leaderboard extends React.Component<Props, State> {
 
   getEntries() {
     const { FBInstant } = this.props
+
+    this.setState({ loadingEntries: true })
 
     FBInstant.getLeaderboardAsync('score')
       .then(leaderboard => {
@@ -123,12 +133,15 @@ class Leaderboard extends React.Component<Props, State> {
           }
         })
 
-        this.setState({ entries: normalizedEntries })
+        this.setState({ entries: normalizedEntries, loadingEntries: false })
       })
+      .catch(() => this.setState({ loadingEntries: false }))
   }
 
   getMeEntry() {
     const { FBInstant } = this.props
+
+    this.setState({ loadingMeEntry: true })
 
     FBInstant.getLeaderboardAsync('score')
       .then(leaderboard => {
@@ -144,14 +157,17 @@ class Leaderboard extends React.Component<Props, State> {
           score: meEntry.getScore() / 100,
         }
 
-        this.setState({ meEntry: normalizedMeEntry })
+        this.setState({ meEntry: normalizedMeEntry, loadingMeEntry: false })
       })
+      .catch(() => this.setState({ loadingEntries: false }))
   }
 
   renderEntries(): any {
-    const { entries } = this.state
+    const { entries, loadingEntries } = this.state
 
-    if (entries != null) {
+    if (loadingEntries) {
+      return <LoadingLeaderboardCard>Loading...</LoadingLeaderboardCard>
+    } else if (entries != null) {
       return entries.map((entry: Entry) => (
         <LeaderboardCard>
           <UserWrapper>
@@ -167,9 +183,11 @@ class Leaderboard extends React.Component<Props, State> {
   }
 
   renderMeEntry(): any {
-    const { meEntry } = this.state
+    const { meEntry, loadingMeEntry } = this.state
 
-    if (meEntry != null) {
+    if (loadingMeEntry) {
+      return <LoadingLeaderboardCard>Loading...</LoadingLeaderboardCard>
+    } else if (meEntry != null) {
       return (
         <>
           <MeLeaderboardCard>
