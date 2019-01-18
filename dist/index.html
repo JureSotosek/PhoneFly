@@ -31,19 +31,23 @@
 
       FBInstant.initializeAsync()
         .then(async () => {
-          const assetsToDownload = ['IndexBanner', 'PlayBanner', 'Jure', 'Ajda', 'Matic', 'Lovro', 'Tela']
+          const assetsToDownload = ['IndexBanner', 'PlayBanner']
           const assets = {}
 
           for (index in assetsToDownload) {
             const asset = assetsToDownload[index]
             assets[asset] = await loadAsset(asset)
+            const progress = ((index+1)/assetsToDownload.length+1) * 100  
+            FBInstant.setLoadingProgress(progress)
           }
 
           window.assets = assets
+          window.FBInstant = FBInstant
 
           const bundle = document.createElement('script')
           bundle.src = 'bundle.js'
           document.body.appendChild(bundle)
+          FBInstant.setLoadingProgress(100)
 
           FBInstant.startGameAsync()
         })

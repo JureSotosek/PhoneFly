@@ -105,9 +105,44 @@ const ScoreWrapper = styled.div`
   padding: 5vw;
   border-radius: 6vw;
   background-color: #f9f9f9;
-  font-size: 6vw;
+`
+
+const CurrentScore = styled.div`
+  margin-bottom: 5vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 7vw;
   font-family: 'Capriola';
   text-align: center;
+`
+
+const BestScoreWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const BestScore = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 6vw;
+  font-family: 'Capriola';
+`
+
+const ShareButton = styled.div`
+  border: none;
+
+  width: 80%;
+  height: 16vw;
+  border-radius: 4vw;
+  box-shadow: 0.3vw 0.3vw 1vw #d6d6d6;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  font-size: 6vw;
+  font-family: 'Capriola';
 `
 
 type Props = {
@@ -119,6 +154,8 @@ type Props = {
 type State = {
   startedFallingAt: ?Date,
   highestFallLasted: number,
+  bestScore: number,
+  lastRecordedValue: Date,
 }
 
 class Play extends React.Component<Props, State> {
@@ -128,11 +165,18 @@ class Play extends React.Component<Props, State> {
     this.state = {
       startedFallingAt: null,
       highestFallLasted: 0,
+      bestScore: 0,
+      lastRecordedValue: new Date(),
     }
   }
 
   componentDidMount() {
+    const { FBInstant } = this.props
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
+
+    if (FBInstant != null) {
+      this.getBestScore()
+    }
   }
 
   componentWillUnmount() {
@@ -140,33 +184,83 @@ class Play extends React.Component<Props, State> {
   }
 
   handleAccelerometer: (event: any) => void = event => {
-    const { startedFallingAt, highestFallLasted } = this.state
     const {
-      x,
-      y,
-      z,
-    }: { x: number, y: number, z: number } = event.accelerationIncludingGravity
+      startedFallingAt,
+      lastRecordedValue,
+      highestFallLasted,
+      bestScore,
+    } = this.state
+    const { FBInstant } = this.props
+    const { x, y, z } = event.accelerationIncludingGravity
+    const { alpha, beta, gamma } = event.rotationRate
 
-    const acceleration = (x ** 2 + y ** 2 + z ** 2) ** 0.5
+    const acceleration = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
 
-    if (acceleration < 2 && !startedFallingAt) {
+    const beta2 = Math.pow(beta, 2)
+    const gamma2 = Math.pow(gamma, 2)
+    const rotation = z < 5 && (beta2 > 40000 || gamma2 > 40000)
+
+    if ((acceleration || rotation) && !startedFallingAt) {
       this.setState({ startedFallingAt: new Date() })
-    } else if (acceleration > 2 && startedFallingAt != null) {
+    } else if (!acceleration && !rotation && startedFallingAt != null) {
       const fallLasted = new Date() - startedFallingAt
-      if (highestFallLasted === null || fallLasted > highestFallLasted) {
+      const fromLastRecordedValue = new Date() - lastRecordedValue
+      if (
+        highestFallLasted === null ||
+        fallLasted > highestFallLasted ||
+        fromLastRecordedValue > 500
+      ) {
         this.setState({
           highestFallLasted: fallLasted,
         })
+
+        const height = (9.81 * (fallLasted / 2000) ** 2) / 2
+        const heightRounded = Math.round(height * 100) / 100
+        if (bestScore < heightRounded) {
+          this.setState({ bestScore: heightRounded })
+        }
+
+        if (FBInstant != null) {
+          this.setBestScore(heightRounded)
+        }
       }
       this.setState({ startedFallingAt: null })
     }
+    this.setState({ lastRecordedValue: new Date() })
+  }
+
+  getBestScore: () => void = () => {
+    const { FBInstant } = this.props
+
+    FBInstant.getLeaderboardAsync('score')
+      .then(leaderboard => {
+        return leaderboard.getPlayerEntryAsync()
+      })
+      .then(entry => {
+        const bestScore = entry.getScore()
+        if (bestScore) {
+          this.setState({ bestScore: bestScore / 100 })
+        }
+      })
+  }
+
+  setBestScore: number => void = (score: number) => {
+    const { FBInstant } = this.props
+
+    FBInstant.getLeaderboardAsync('score')
+      .then(leaderboard => {
+        return leaderboard.setScoreAsync(Math.round(score * 100))
+      })
+      .then(entry => {
+        this.getBestScore()
+      })
   }
 
   render() {
-    const { highestFallLasted } = this.state
+    const { highestFallLasted, bestScore } = this.state
     const { history, assets = {} } = this.props
 
-    const height = (9.81 * (highestFallLasted / 2000) ** 2) / 2
+    const height = ((9.81 * (highestFallLasted / 2000) ** 2) / 2).toFixed(2)
 
     return (
       <Wrapper>
@@ -175,7 +269,13 @@ class Play extends React.Component<Props, State> {
           <Banner src={assets.PlayBanner} alt="PhoneFly" />
         </TopWrapper>
         <BottomWrapper>
-          <ScoreWrapper>Score: {height.toFixed(2)}m</ScoreWrapper>
+          <ScoreWrapper>
+            <CurrentScore>Score: {height}m</CurrentScore>
+            <BestScoreWrapper>
+              <BestScore>Best: {bestScore}m</BestScore>
+              <ShareButton>SHARE</ShareButton>
+            </BestScoreWrapper>
+          </ScoreWrapper>
           <ButtonsWrapper>
             <ResetButton
               onClick={() => this.setState({ highestFallLasted: 0 })}
