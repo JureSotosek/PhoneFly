@@ -115,7 +115,8 @@ type Props = {
 
 type State = {
   startedFallingAt: ?Date,
-  highestFallLasted: number,
+  highestFallHeight: number,
+  loadingBestScore: boolean,
   bestScore: number,
   prompt: string,
 }
@@ -126,7 +127,8 @@ class Play extends React.Component<Props, State> {
 
     this.state = {
       startedFallingAt: null,
-      highestFallLasted: 0,
+      highestFallHeight: 0,
+      loadingBestScore: false,
       bestScore: 0,
       prompt: 'How high can you throw your phone?',
     }
@@ -146,7 +148,7 @@ class Play extends React.Component<Props, State> {
   }
 
   handleAccelerometer: (event: any) => void = event => {
-    const { startedFallingAt, highestFallLasted, bestScore } = this.state
+    const { startedFallingAt, highestFallHeight, bestScore } = this.state
     const { FBInstant } = this.props
 
     const {
@@ -169,14 +171,13 @@ class Play extends React.Component<Props, State> {
       this.setState({ startedFallingAt: new Date() })
     } else if (!acceleration && !rotation && startedFallingAt != null) {
       const fallLasted = new Date() - startedFallingAt
+      const height = (9.81 * (fallLasted / 2000) ** 2) / 2
+      const heightRounded = parseInt(height * 100) / 100
 
-      if (highestFallLasted === null || fallLasted > highestFallLasted) {
+      if (heightRounded > highestFallHeight) {
         this.setState({
-          highestFallLasted: fallLasted,
+          highestFallHeight: heightRounded,
         })
-
-        const height = (9.81 * (fallLasted / 2000) ** 2) / 2
-        const heightRounded = parseInt(height * 100) / 100
 
         if (bestScore < heightRounded && FBInstant != null) {
           this.setBestScore(heightRounded)
@@ -190,6 +191,8 @@ class Play extends React.Component<Props, State> {
   getBestScore: () => void = () => {
     const { FBInstant } = this.props
 
+    this.setState({ loadingBestScore: true })
+
     FBInstant.getLeaderboardAsync('score')
       .then(leaderboard => {
         return leaderboard.getPlayerEntryAsync()
@@ -197,8 +200,11 @@ class Play extends React.Component<Props, State> {
       .then(entry => {
         const bestScore = entry.getScore()
         if (bestScore) {
-          this.setState({ bestScore: bestScore / 100 })
+          this.setState({ bestScore: bestScore / 100, loadingBestScore: false })
         }
+      })
+      .catch(() => {
+        this.setState({ loadingBestScore: false })
       })
   }
 
@@ -215,12 +221,25 @@ class Play extends React.Component<Props, State> {
       })
   }
 
-  render() {
-    const { highestFallLasted, bestScore, prompt } = this.state
-    const { history, assets = {} } = this.props
+  share: () => void = () => {
+    const { bestScore } = this.state
+    const { FBInstant, assets } = this.props
 
-    const height = (9.81 * (highestFallLasted / 2000) ** 2) / 2
-    const heightRounded = parseInt(height * 100) / 100
+    FBInstant.shareAsync({
+      intent: 'SHARE',
+      image: assets.IndexBanner,
+      text: `My high score in PhoneFly is ${bestScore}m🔥`,
+    }).catch(console.log)
+  }
+
+  render() {
+    const {
+      highestFallHeight,
+      bestScore,
+      loadingBestScore,
+      prompt,
+    } = this.state
+    const { history, assets = {} } = this.props
 
     return (
       <Wrapper>
@@ -230,15 +249,17 @@ class Play extends React.Component<Props, State> {
         </TopWrapper>
         <BottomWrapper>
           <ScoreWrapper>
-            <CurrentScore>Score: {heightRounded}m</CurrentScore>
+            <CurrentScore>Score: {highestFallHeight}m</CurrentScore>
             <BestScoreWrapper>
-              <BestScore>Best: {bestScore}m</BestScore>
-              <ShareButton>SHARE</ShareButton>
+              <BestScore>
+                {loadingBestScore ? 'Loading...' : `Best: ${bestScore}m`}
+              </BestScore>
+              <ShareButton onClick={this.share}>SHARE</ShareButton>
             </BestScoreWrapper>
           </ScoreWrapper>
           <ButtonsWrapper>
             <BlackButton
-              onClick={() => this.setState({ highestFallLasted: 0 })}
+              onClick={() => this.setState({ highestFallHeight: 0 })}
             >
               RESET
             </BlackButton>

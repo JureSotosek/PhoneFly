@@ -44,16 +44,26 @@ type Props = {
   FBInstant: any,
 }
 
-const Index = ({ history, assets = {}, FBInstant }: Props) => (
-  <Wrapper>
-    <Banner src={assets.IndexBanner} alt="PhoneFly" />
-    <ButtonsWrapper>
-      <BlackButton onClick={() => history.push('play')}>PLAY</BlackButton>
-      <Button>INVITE</Button>
-    </ButtonsWrapper>
-    <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
-    <Leaderboard FBInstant={FBInstant} />
-  </Wrapper>
-)
+const Index = ({ history, assets = {}, FBInstant }: Props) => {
+  const invite: () => void = () => {
+    FBInstant.shareAsync({
+      intent: 'INVITE',
+      image: assets.IndexBanner,
+      text: 'Can you beat me at PhoneFly?',
+    }).catch(console.log)
+  }
+
+  return (
+    <Wrapper>
+      <Banner src={assets.IndexBanner} alt="PhoneFly" />
+      <ButtonsWrapper>
+        <BlackButton onClick={() => history.push('play')}>PLAY</BlackButton>
+        <Button onClick={invite}>INVITE</Button>
+      </ButtonsWrapper>
+      <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
+      <Leaderboard FBInstant={FBInstant} />
+    </Wrapper>
+  )
+}
 
 export default Index
