@@ -191,6 +191,10 @@ class Play extends React.Component<Props, State> {
 
         if (bestScore < heightRounded && FBInstant != null) {
           this.setBestScore(heightRounded)
+          this.setState({
+            bestScore: heightRounded,
+            prompt: 'New High Score!🥳🎉',
+          })
         }
       }
       const newDisableButtonsTimeout = setTimeout(() => {
@@ -207,7 +211,11 @@ class Play extends React.Component<Props, State> {
       const fallLasted = new Date() - startedFallingAt
 
       if (fallLasted > 250) {
-        this.setState({ disableButtons: true, disableButtonsTimeout: null })
+        this.setState({
+          disableButtons: true,
+          disableButtonsTimeout: null,
+          prompt: 'Can you beat that?',
+        })
       }
     }
     this.setState({
