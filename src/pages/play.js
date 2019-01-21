@@ -66,11 +66,6 @@ const ButtonsWrapper = styled.div`
   justify-content: space-around;
 `
 
-const BlackButton = styled(Button)`
-  background-color: black;
-  color: white;
-`
-
 const ScoreWrapper = styled.div`
   margin-left: 5vw;
   margin-right: 5vw;
@@ -116,9 +111,12 @@ type Props = {
 type State = {
   startedFallingAt: ?Date,
   highestFallHeight: number,
+  lastRecordAt: Date,
   loadingBestScore: boolean,
   bestScore: number,
   prompt: string,
+  disableButtons: boolean,
+  disableButtonsTimeout: ?TimeoutID,
 }
 
 class Play extends React.Component<Props, State> {
@@ -128,9 +126,12 @@ class Play extends React.Component<Props, State> {
     this.state = {
       startedFallingAt: null,
       highestFallHeight: 0,
+      lastRecordAt: new Date(),
       loadingBestScore: false,
       bestScore: 0,
       prompt: 'How high can you throw your phone?',
+      disableButtons: false,
+      disableButtonsTimeout: null,
     }
   }
 
@@ -148,7 +149,13 @@ class Play extends React.Component<Props, State> {
   }
 
   handleAccelerometer: (event: any) => void = event => {
-    const { startedFallingAt, highestFallHeight, bestScore } = this.state
+    const {
+      startedFallingAt,
+      highestFallHeight,
+      lastRecordAt,
+      bestScore,
+      disableButtonsTimeout,
+    } = this.state
     const { FBInstant } = this.props
 
     const {
@@ -163,18 +170,21 @@ class Play extends React.Component<Props, State> {
     }: { alpha: number, beta: number, gamma: number } = event.rotationRate
 
     const acceleration = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
+    const alpha2 = Math.pow(alpha, 2)
     const beta2 = Math.pow(beta, 2)
     const gamma2 = Math.pow(gamma, 2)
-    const rotation = z < 5 && (beta2 > 40000 || gamma2 > 40000)
+    const rotation =
+      z < 5 && (beta2 > 40000 || gamma2 > 40000 || alpha2 > 40000)
 
-    if ((acceleration || rotation) && !startedFallingAt) {
+    if ((acceleration || rotation) && startedFallingAt === null) {
       this.setState({ startedFallingAt: new Date() })
     } else if (!acceleration && !rotation && startedFallingAt != null) {
       const fallLasted = new Date() - startedFallingAt
+      const sinceLastRecord = new Date() - lastRecordAt
       const height = (9.81 * (fallLasted / 2000) ** 2) / 2
       const heightRounded = parseInt(height * 100) / 100
 
-      if (heightRounded > highestFallHeight) {
+      if (heightRounded > highestFallHeight && sinceLastRecord < 100) {
         this.setState({
           highestFallHeight: heightRounded,
         })
@@ -183,9 +193,26 @@ class Play extends React.Component<Props, State> {
           this.setBestScore(heightRounded)
         }
       }
+      const newDisableButtonsTimeout = setTimeout(() => {
+        if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
+          this.setState({ disableButtons: false })
+        }
+      }, 1500)
 
-      this.setState({ startedFallingAt: null })
+      this.setState({
+        startedFallingAt: null,
+        disableButtonsTimeout: newDisableButtonsTimeout,
+      })
+    } else if (startedFallingAt != null) {
+      const fallLasted = new Date() - startedFallingAt
+
+      if (fallLasted > 250) {
+        this.setState({ disableButtons: true, disableButtonsTimeout: null })
+      }
     }
+    this.setState({
+      lastRecordAt: new Date(),
+    })
   }
 
   getBestScore: () => void = () => {
@@ -222,14 +249,16 @@ class Play extends React.Component<Props, State> {
   }
 
   share: () => void = () => {
-    const { bestScore } = this.state
+    const { bestScore, disableButtons } = this.state
     const { FBInstant, assets } = this.props
 
-    FBInstant.shareAsync({
-      intent: 'SHARE',
-      image: assets.IndexBanner,
-      text: `My high score in PhoneFly is ${bestScore}m🔥`,
-    }).catch(console.log)
+    if (!disableButtons) {
+      FBInstant.shareAsync({
+        intent: 'SHARE',
+        image: assets.IndexBanner,
+        text: `My high score in PhoneFly is ${bestScore}m🔥`,
+      })
+    }
   }
 
   render() {
@@ -238,6 +267,7 @@ class Play extends React.Component<Props, State> {
       bestScore,
       loadingBestScore,
       prompt,
+      disableButtons,
     } = this.state
     const { history, assets = {} } = this.props
 
@@ -249,21 +279,50 @@ class Play extends React.Component<Props, State> {
         </TopWrapper>
         <BottomWrapper>
           <ScoreWrapper>
-            <CurrentScore>Score: {highestFallHeight}m</CurrentScore>
+            <CurrentScore>{`Score: ${highestFallHeight.toFixed(
+              2,
+            )}m`}</CurrentScore>
             <BestScoreWrapper>
               <BestScore>
-                {loadingBestScore ? 'Loading...' : `Best: ${bestScore}m`}
+                {loadingBestScore
+                  ? 'Loading...'
+                  : `Best: ${bestScore.toFixed(2)}m`}
               </BestScore>
-              <ShareButton onClick={this.share}>SHARE</ShareButton>
+              <ShareButton
+                disabled={disableButtons}
+                color={'white'}
+                fontColor={'black'}
+                onClick={this.share}
+              >
+                SHARE
+              </ShareButton>
             </BestScoreWrapper>
           </ScoreWrapper>
           <ButtonsWrapper>
-            <BlackButton
-              onClick={() => this.setState({ highestFallHeight: 0 })}
+            <Button
+              disabled={disableButtons}
+              color={'black'}
+              fontColor={'white'}
+              onClick={() => {
+                if (!disableButtons) {
+                  this.setState({ highestFallHeight: 0 })
+                }
+              }}
             >
               RESET
-            </BlackButton>
-            <Button onClick={() => history.push('')}>BACK</Button>
+            </Button>
+            <Button
+              disabled={disableButtons}
+              color={'white'}
+              fontColor={'black'}
+              onClick={() => {
+                if (!disableButtons) {
+                  history.push('')
+                }
+              }}
+            >
+              BACK
+            </Button>
           </ButtonsWrapper>
         </BottomWrapper>
       </Wrapper>

@@ -176,7 +176,7 @@ class Leaderboard extends React.Component<Props, State> {
             <UserImage src={entry.image} />
             <UserName>{entry.name}</UserName>
           </UserWrapper>
-          <Score>{entry.score}m</Score>
+          <Score>{entry.score.toFixed(2)}m</Score>
         </LeaderboardCard>
       ))
     }
@@ -197,7 +197,7 @@ class Leaderboard extends React.Component<Props, State> {
               <UserImage src={meEntry.image} />
               <UserName>{meEntry.name}</UserName>
             </UserWrapper>
-            <Score>{meEntry.score}m</Score>
+            <Score>{meEntry.score.toFixed(2)}m</Score>
           </MeLeaderboardCard>
           <HorizontalDivider />
         </>

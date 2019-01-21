@@ -11,7 +11,9 @@ const Button = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
+  background-color: ${({ disabled, color }) =>
+    disabled ? 'lightGrey' : color};
+  color: ${({ disabled, fontColor }) => (disabled ? 'black' : fontColor)};
   font-size: 8vw;
   font-family: 'Capriola';
 `

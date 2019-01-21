@@ -27,11 +27,6 @@ const ButtonsWrapper = styled.div`
   justify-content: space-around;
 `
 
-const BlackButton = styled(Button)`
-  background-color: black;
-  color: white;
-`
-
 const LeaderboardTitle = styled.div`
   margin-left: 5vw;
   font-size: 8vw;
@@ -57,8 +52,16 @@ const Index = ({ history, assets = {}, FBInstant }: Props) => {
     <Wrapper>
       <Banner src={assets.IndexBanner} alt="PhoneFly" />
       <ButtonsWrapper>
-        <BlackButton onClick={() => history.push('play')}>PLAY</BlackButton>
-        <Button onClick={invite}>INVITE</Button>
+        <Button
+          color={'black'}
+          fontColor={'white'}
+          onClick={() => history.push('play')}
+        >
+          PLAY
+        </Button>
+        <Button color={'white'} fontColor={'black'} onClick={invite}>
+          INVITE
+        </Button>
       </ButtonsWrapper>
       <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
       <Leaderboard FBInstant={FBInstant} />
