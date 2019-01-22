@@ -60,7 +60,7 @@ const BottomWrapper = styled.div`
 
 const ButtonsWrapper = styled.div`
   padding: 3vw;
-  margin-bottom: 2vw;
+  margin-bottom: 3vw;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -201,7 +201,7 @@ class Play extends React.Component<Props, State> {
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
         }
-      }, 1500)
+      }, 750)
 
       this.setState({
         startedFallingAt: null,
@@ -210,11 +210,11 @@ class Play extends React.Component<Props, State> {
     } else if (startedFallingAt != null) {
       const fallLasted = new Date() - startedFallingAt
 
-      if (fallLasted > 250) {
+      if (fallLasted > 500) {
         this.setState({
           disableButtons: true,
           disableButtonsTimeout: null,
-          prompt: 'Can you beat that?',
+          prompt: 'Can you beat your high score?',
         })
       }
     }

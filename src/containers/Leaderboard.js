@@ -78,10 +78,11 @@ const Score = styled.div`
 `
 
 type Entry = {
-  rank: number,
+  rank: ?number,
   name: string,
   image: string,
   score: number,
+  id: string,
 }
 
 type Props = {
@@ -107,59 +108,77 @@ class Leaderboard extends React.Component<Props, State> {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    await this.getMeEntry()
     this.getEntries()
-    this.getMeEntry()
   }
 
   getEntries() {
+    const { meEntry } = this.state
     const { FBInstant } = this.props
 
     this.setState({ loadingEntries: true })
 
-    FBInstant.getLeaderboardAsync('score')
-      .then(leaderboard => {
-        return leaderboard.getConnectedPlayerEntriesAsync()
-      })
-      .then(entries => {
-        const normalizedEntries: Entry[] = entries.map(entry => {
-          const player = entry.getPlayer()
+    try {
+      const leaderboard = FBInstant.getLeaderboardAsync('score')
+      const entries = leaderboard.getConnectedPlayerEntriesAsync(100, 0)
 
-          return {
-            rank: entry.getRank(),
-            name: player.getName(),
-            image: player.getPhoto(),
-            score: entry.getScore() / 100,
-          }
-        })
+      const normalizedEntries: Entry[] = entries.map(entry => {
+        const player = entry.getPlayer()
+        const rank = entry.getRank()
+        const name = player.getName()
+        const image = player.getPhoto()
+        const score = entry.getScore() / 100
+        const id = player.getID()
 
-        this.setState({ entries: normalizedEntries, loadingEntries: false })
+        if (meEntry != null && meEntry.id === id) {
+          this.setState({
+            meEntry: { ...meEntry, rank },
+          })
+        }
+
+        return {
+          rank,
+          name,
+          image,
+          score,
+          id,
+        }
       })
-      .catch(() => this.setState({ loadingEntries: false }))
+
+      this.setState({ entries: normalizedEntries, loadingEntries: false })
+    } catch (error) {
+      this.setState({ loadingEntries: false })
+    }
   }
 
-  getMeEntry() {
+  async getMeEntry() {
     const { FBInstant } = this.props
 
     this.setState({ loadingMeEntry: true })
 
-    FBInstant.getLeaderboardAsync('score')
-      .then(leaderboard => {
-        return leaderboard.getPlayerEntryAsync()
-      })
-      .then(meEntry => {
-        const player = meEntry.getPlayer()
+    try {
+      const leaderboard = await FBInstant.getLeaderboardAsync('score')
+      const meEntry = await leaderboard.getPlayerEntryAsync()
 
-        const normalizedMeEntry = {
-          rank: meEntry.getRank(),
-          name: player.getName(),
-          image: player.getPhoto(),
-          score: meEntry.getScore() / 100,
-        }
+      const player = meEntry.getPlayer()
+      const rank = meEntry.getRank()
+      const name = player.getName()
+      const image = player.getPhoto()
+      const score = meEntry.getScore() / 100
+      const id = player.getID()
 
-        this.setState({ meEntry: normalizedMeEntry, loadingMeEntry: false })
-      })
-      .catch(() => this.setState({ loadingEntries: false }))
+      const normalizedMeEntry: Entry = {
+        rank,
+        name,
+        image,
+        score,
+        id,
+      }
+      this.setState({ meEntry: normalizedMeEntry, loadingMeEntry: false })
+    } catch (error) {
+      this.setState({ loadingMeEntry: false })
+    }
   }
 
   renderEntries(): any {
@@ -192,14 +211,13 @@ class Leaderboard extends React.Component<Props, State> {
         <>
           <MeLeaderboardCard>
             <UserWrapper>
-              <UserRank>{meEntry.rank}</UserRank>
+              <UserRank>{meEntry.rank || '-'}</UserRank>
               <VerticalDivider />
               <UserImage src={meEntry.image} />
               <UserName>{meEntry.name}</UserName>
             </UserWrapper>
             <Score>{meEntry.score.toFixed(2)}m</Score>
           </MeLeaderboardCard>
-          <HorizontalDivider />
         </>
       )
     }
@@ -209,6 +227,7 @@ class Leaderboard extends React.Component<Props, State> {
     return (
       <LeaderboardWrapper>
         {this.renderMeEntry()}
+        <HorizontalDivider />
         {this.renderEntries()}
       </LeaderboardWrapper>
     )
