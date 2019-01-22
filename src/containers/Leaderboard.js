@@ -113,15 +113,15 @@ class Leaderboard extends React.Component<Props, State> {
     this.getEntries()
   }
 
-  getEntries() {
+  async getEntries() {
     const { meEntry } = this.state
     const { FBInstant } = this.props
 
     this.setState({ loadingEntries: true })
 
     try {
-      const leaderboard = FBInstant.getLeaderboardAsync('score')
-      const entries = leaderboard.getConnectedPlayerEntriesAsync(100, 0)
+      const leaderboard = await FBInstant.getLeaderboardAsync('score')
+      const entries = await leaderboard.getConnectedPlayerEntriesAsync(100, 0)
 
       const normalizedEntries: Entry[] = entries.map(entry => {
         const player = entry.getPlayer()
