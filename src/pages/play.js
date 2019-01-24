@@ -296,6 +296,7 @@ class Play extends React.Component<Props, State> {
           )}m🔥`,
         },
         template: 'beat_highscore',
+        strategy: 'LAST',
       })
     } catch (error) {
       console.log(error)

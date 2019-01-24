@@ -48,19 +48,6 @@ type Props = {
   FBInstant: any,
 }
 
-type ChallangeData = {
-  challengedBy: string,
-  height: number,
-}
-
-type EntryPointData = {
-  replayData: ChallangeData,
-}
-
-type State = {
-  challange: ?ChallangeData,
-}
-
 const Index = ({ history, assets, FBInstant }: Props) => {
   const onChallengeSend: () => void = () => {
     history.push('sendChallenge')

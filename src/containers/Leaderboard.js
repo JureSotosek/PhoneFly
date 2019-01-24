@@ -148,6 +148,7 @@ class Leaderboard extends React.Component<Props, State> {
 
       this.setState({ entries: normalizedEntries, loadingEntries: false })
     } catch (error) {
+      console.log(error)
       this.setState({ loadingEntries: false })
     }
   }
@@ -177,6 +178,7 @@ class Leaderboard extends React.Component<Props, State> {
       }
       this.setState({ meEntry: normalizedMeEntry, loadingMeEntry: false })
     } catch (error) {
+      console.log(error)
       this.setState({ loadingMeEntry: false })
     }
   }

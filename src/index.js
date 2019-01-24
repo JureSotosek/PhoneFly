@@ -15,23 +15,23 @@ const assets = window.assets
 
 //React App
 
-type ChallangeData = {
+type EntryPointData = {
   challengedBy: string,
   height: number,
-}
-
-type EntryPointData = {
-  myReplayData: ChallangeData,
+  id: string,
 }
 
 const App = () => {
   const entryPointData: ?EntryPointData = FBInstant.getEntryPointData()
+  const playerId = FBInstant.player.getID()
   console.log(entryPointData)
 
   return (
     <MemoryRouter
       initialEntries={['', '/answerChallenge']}
-      initialIndex={entryPointData != null ? 1 : 0}
+      initialIndex={
+        entryPointData != null && entryPointData.id != playerId ? 1 : 0
+      }
     >
       <Switch>
         <Route

@@ -222,6 +222,7 @@ class Play extends React.Component<Props, State> {
     const { FBInstant, assets } = this.props
 
     const name = FBInstant.player.getName()
+    const id = FBInstant.player.getID()
 
     if (!disableButtons) {
       try {
@@ -232,10 +233,9 @@ class Play extends React.Component<Props, State> {
             2,
           )}m🔥`,
           data: {
-            myReplayData: {
-              challengedBy: name,
-              height: highestFallHeight,
-            },
+            challengedBy: name,
+            height: highestFallHeight,
+            id,
           },
         })
       } catch (error) {

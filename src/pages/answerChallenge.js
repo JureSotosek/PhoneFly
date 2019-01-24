@@ -103,13 +103,10 @@ const ChallangeButton = styled(Button)`
   font-size: 6vw;
 `
 
-type ChallangeData = {
+type EntryPointData = {
   challengedBy: string,
   height: number,
-}
-
-type EntryPointData = {
-  myReplayData: ChallangeData,
+  id: string,
 }
 
 type Props = {
@@ -135,10 +132,7 @@ class AnswerChallenge extends React.Component<Props, State> {
     const { entryPointData } = props
 
     if (entryPointData != null) {
-      console.log(entryPointData)
-      const {
-        myReplayData: { challengedBy, height },
-      } = entryPointData
+      const { challengedBy, height } = entryPointData
 
       this.state = {
         startedFallingAt: null,
@@ -195,7 +189,7 @@ class AnswerChallenge extends React.Component<Props, State> {
       //Fall started
       this.setState({ startedFallingAt: new Date() })
     } else if (
-      !rotationTreshold &&
+      !accelerationThreshold &&
       !rotationTreshold &&
       startedFallingAt != null
     ) {
@@ -241,11 +235,15 @@ class AnswerChallenge extends React.Component<Props, State> {
 
   answerChallenge: () => void = () => {
     const { highestFallHeight, disableButtons } = this.state
-    const { FBInstant, assets, history } = this.props
+    const { FBInstant, assets, history, entryPointData } = this.props
 
     const name = FBInstant.player.getName()
 
-    if (!disableButtons) {
+    if (
+      !disableButtons &&
+      entryPointData != null &&
+      entryPointData.height < highestFallHeight
+    ) {
       try {
         FBInstant.updateAsync({
           action: 'CUSTOM',
@@ -254,10 +252,8 @@ class AnswerChallenge extends React.Component<Props, State> {
             2,
           )}m🔥`,
           data: {
-            myReplayData: {
-              challengedBy: name,
-              height: highestFallHeight,
-            },
+            challengedBy: name,
+            height: highestFallHeight,
           },
           template: 'answer_challenge',
         })
@@ -273,9 +269,7 @@ class AnswerChallenge extends React.Component<Props, State> {
     const { history, assets = {}, entryPointData } = this.props
 
     if (entryPointData != null) {
-      const {
-        myReplayData: { challengedBy, height: heightToBeat },
-      } = entryPointData
+      const { challengedBy, height: heightToBeat } = entryPointData
 
       return (
         <Wrapper>
