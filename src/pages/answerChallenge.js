@@ -1,4 +1,5 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
 import type { RouterHistory } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -27,7 +28,7 @@ const TopWrapper = styled.div`
 
 const Prompt = styled.div`
   width: 100%;
-  height: 40vw;
+  height: 50vw;
   padding: 5vw;
   box-sizing: border-box;
 
@@ -37,7 +38,7 @@ const Prompt = styled.div`
   align-items: center;
 
   text-align: center;
-  font-size: 8vw;
+  font-size: 6vw;
   font-family: 'Capriola';
 
   background-color: #f9f9f9;
@@ -97,51 +98,63 @@ const BestScore = styled.div`
   font-family: 'Capriola';
 `
 
-const ShareButton = styled(Button)`
-  width: 80%;
+const ChallangeButton = styled(Button)`
+  width: 100%;
   font-size: 6vw;
 `
+
+type ChallangeData = {
+  challengedBy: string,
+  height: number,
+}
+
+type EntryPointData = {
+  myReplayData: ChallangeData,
+}
 
 type Props = {
   history: RouterHistory,
   assets: any,
   FBInstant: any,
+  entryPointData: ?EntryPointData,
 }
 
 type State = {
   startedFallingAt: ?Date,
   highestFallHeight: number,
   lastRecordAt: Date,
-  loadingBestScore: boolean,
-  bestScore: number,
   prompt: string,
   disableButtons: boolean,
   disableButtonsTimeout: ?TimeoutID,
 }
 
-class Play extends React.Component<Props, State> {
-  constructor() {
-    super()
+class AnswerChallenge extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
 
-    this.state = {
-      startedFallingAt: null,
-      highestFallHeight: 0,
-      lastRecordAt: new Date(),
-      loadingBestScore: false,
-      bestScore: 0,
-      prompt: 'How high can you throw your phone?',
-      disableButtons: false,
-      disableButtonsTimeout: null,
+    const { entryPointData } = props
+
+    if (entryPointData != null) {
+      console.log(entryPointData)
+      const {
+        myReplayData: { challengedBy, height },
+      } = entryPointData
+
+      this.state = {
+        startedFallingAt: null,
+        highestFallHeight: 0,
+        lastRecordAt: new Date(),
+        prompt: `${challengedBy} 🎮 challenged you. Beat their ${height.toFixed(
+          2,
+        )}m to send challange back🔥`,
+        disableButtons: false,
+        disableButtonsTimeout: null,
+      }
     }
   }
 
   componentDidMount() {
-    const { FBInstant } = this.props
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
-
-    if (FBInstant != null) {
-      this.getBestScore()
-    }
   }
 
   componentWillUnmount() {
@@ -153,7 +166,6 @@ class Play extends React.Component<Props, State> {
       startedFallingAt,
       highestFallHeight,
       lastRecordAt,
-      bestScore,
       disableButtonsTimeout,
     } = this.state
     const { FBInstant } = this.props
@@ -169,7 +181,7 @@ class Play extends React.Component<Props, State> {
       gamma,
     }: { alpha: number, beta: number, gamma: number } = event.rotationRate
 
-    const accelerationTreshold = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
+    const accelerationThreshold = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
     const alpha2 = Math.pow(alpha, 2)
     const beta2 = Math.pow(beta, 2)
     const gamma2 = Math.pow(gamma, 2)
@@ -177,13 +189,13 @@ class Play extends React.Component<Props, State> {
       z < 5 && (beta2 > 40000 || gamma2 > 40000 || alpha2 > 40000)
 
     if (
-      (accelerationTreshold || rotationTreshold) &&
+      (accelerationThreshold || rotationTreshold) &&
       startedFallingAt === null
     ) {
       //Fall started
       this.setState({ startedFallingAt: new Date() })
     } else if (
-      !accelerationTreshold &&
+      !rotationTreshold &&
       !rotationTreshold &&
       startedFallingAt != null
     ) {
@@ -198,15 +210,6 @@ class Play extends React.Component<Props, State> {
         this.setState({
           highestFallHeight: heightRounded,
         })
-
-        if (bestScore < heightRounded && FBInstant != null) {
-          //Check for global high score
-          this.setBestScore(heightRounded)
-          this.setState({
-            bestScore: heightRounded,
-            prompt: 'New High Score!🥳🎉',
-          })
-        }
       }
       const newDisableButtonsTimeout = setTimeout(() => {
         //Cancel dissabled buttons
@@ -228,7 +231,6 @@ class Play extends React.Component<Props, State> {
         this.setState({
           disableButtons: true,
           disableButtonsTimeout: null,
-          prompt: 'Can you beat your high score?',
         })
       }
     }
@@ -237,136 +239,99 @@ class Play extends React.Component<Props, State> {
     })
   }
 
-  getBestScore: () => Promise<void> = async () => {
-    const { FBInstant } = this.props
+  answerChallenge: () => void = () => {
+    const { highestFallHeight, disableButtons } = this.state
+    const { FBInstant, assets, history } = this.props
 
-    this.setState({ loadingBestScore: true })
-
-    try {
-      const leaderboard = await FBInstant.getLeaderboardAsync('score')
-      const entry = await leaderboard.getPlayerEntryAsync()
-      const bestScore = entry.getScore()
-      if (bestScore) {
-        this.setState({ bestScore: bestScore / 100, loadingBestScore: false })
-      }
-    } catch (error) {
-      this.setState({ loadingBestScore: false })
-      console.log(error)
-    }
-  }
-
-  setBestScore: number => Promise<void> = async (score: number) => {
-    const { prompt } = this.state
-    const { FBInstant } = this.props
-
-    try {
-      const leaderboard = await FBInstant.getLeaderboardAsync('score')
-      const entry = await leaderboard.setScoreAsync(parseInt(score * 100))
-      this.updateInContext()
-      this.getBestScore()
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  share: () => void = () => {
-    const { bestScore, disableButtons } = this.state
-    const { FBInstant, assets } = this.props
+    const name = FBInstant.player.getName()
 
     if (!disableButtons) {
-      FBInstant.shareAsync({
-        intent: 'SHARE',
-        image: assets.IndexBanner,
-        text: `My high score in PhoneFly is ${bestScore.toFixed(2)}m🔥`,
-      })
-    }
-  }
-
-  updateInContext: () => void = () => {
-    const { bestScore } = this.state
-    const { FBInstant, assets } = this.props
-
-    try {
-      FBInstant.updateAsync({
-        action: 'CUSTOM',
-        image: assets.IndexBanner,
-        text: {
-          default: `My new high score in PhoneFly is ${bestScore.toFixed(
+      try {
+        FBInstant.updateAsync({
+          action: 'CUSTOM',
+          image: assets.IndexBanner,
+          text: `Haa! I beat it. New score to beat: ${highestFallHeight.toFixed(
             2,
           )}m🔥`,
-        },
-        template: 'beat_highscore',
-      })
-    } catch (error) {
-      console.log(error)
+          data: {
+            myReplayData: {
+              challengedBy: name,
+              height: highestFallHeight,
+            },
+          },
+          template: 'answer_challenge',
+        })
+        history.push('')
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
   render() {
-    const {
-      highestFallHeight,
-      bestScore,
-      loadingBestScore,
-      prompt,
-      disableButtons,
-    } = this.state
-    const { history, assets = {} } = this.props
+    const { highestFallHeight, prompt, disableButtons } = this.state
+    const { history, assets = {}, entryPointData } = this.props
 
-    return (
-      <Wrapper>
-        <TopWrapper>
-          <Prompt>{prompt}</Prompt>
-          <Banner src={assets.PlayBanner} alt="PhoneFly" />
-        </TopWrapper>
-        <BottomWrapper>
-          <ScoreWrapper>
-            <CurrentScore>{`Score: ${highestFallHeight.toFixed(
-              2,
-            )}m`}</CurrentScore>
-            <BestScoreWrapper>
-              <BestScore>
-                {loadingBestScore ? 'Loading...' : `Best: ${bestScore}m`}
-              </BestScore>
-              <ShareButton
+    if (entryPointData != null) {
+      const {
+        myReplayData: { challengedBy, height: heightToBeat },
+      } = entryPointData
+
+      return (
+        <Wrapper>
+          <TopWrapper>
+            <Prompt>{prompt}</Prompt>
+            <Banner src={assets.PlayBanner} alt="PhoneFly" />
+          </TopWrapper>
+          <BottomWrapper>
+            <ScoreWrapper>
+              <CurrentScore>{`Score: ${highestFallHeight.toFixed(
+                2,
+              )}m`}</CurrentScore>
+              <BestScoreWrapper>
+                <ChallangeButton
+                  disabled={disableButtons || heightToBeat >= highestFallHeight}
+                  color={'black'}
+                  fontColor={'white'}
+                  onClick={this.answerChallenge}
+                >
+                  SEND BACK
+                </ChallangeButton>
+              </BestScoreWrapper>
+            </ScoreWrapper>
+            <ButtonsWrapper>
+              <Button
                 disabled={disableButtons}
                 color={'white'}
                 fontColor={'black'}
-                onClick={this.share}
+                onClick={() => {
+                  if (!disableButtons) {
+                    this.setState({ highestFallHeight: 0 })
+                  }
+                }}
               >
-                SHARE
-              </ShareButton>
-            </BestScoreWrapper>
-          </ScoreWrapper>
-          <ButtonsWrapper>
-            <Button
-              disabled={disableButtons}
-              color={'black'}
-              fontColor={'white'}
-              onClick={() => {
-                if (!disableButtons) {
-                  this.setState({ highestFallHeight: 0 })
-                }
-              }}
-            >
-              RESET
-            </Button>
-            <Button
-              disabled={disableButtons}
-              color={'white'}
-              fontColor={'black'}
-              onClick={() => {
-                if (!disableButtons) {
-                  history.push('')
-                }
-              }}
-            >
-              BACK
-            </Button>
-          </ButtonsWrapper>
-        </BottomWrapper>
-      </Wrapper>
-    )
+                RESET
+              </Button>
+              <Button
+                disabled={disableButtons}
+                color={'white'}
+                fontColor={'black'}
+                onClick={() => {
+                  if (!disableButtons) {
+                    history.push('')
+                  }
+                }}
+              >
+                BACK
+              </Button>
+            </ButtonsWrapper>
+          </BottomWrapper>
+        </Wrapper>
+      )
+    } else {
+      return <Redirect to={''} />
+    }
   }
 }
 
-export default Play
+export default AnswerChallenge

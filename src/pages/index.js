@@ -1,4 +1,5 @@
 import React from 'react'
+import { Redirect } from 'react-router-dom'
 import type { RouterHistory } from 'react-router-dom'
 
 import styled from 'styled-components'
@@ -33,35 +34,55 @@ const LeaderboardTitle = styled.div`
   font-family: 'Capriola';
 `
 
+const PlayButton = styled(Button)`
+  width: 35%;
+`
+
+const ChallengeButton = styled(Button)`
+  width: 55%;
+`
+
 type Props = {
   history: RouterHistory,
   assets: any,
   FBInstant: any,
 }
 
-const Index = ({ history, assets = {}, FBInstant }: Props) => {
-  const invite: () => void = () => {
-    FBInstant.shareAsync({
-      intent: 'INVITE',
-      image: assets.IndexBanner,
-      text: 'Can you beat me at PhoneFly?',
-    }).catch(console.log)
+type ChallangeData = {
+  challengedBy: string,
+  height: number,
+}
+
+type EntryPointData = {
+  replayData: ChallangeData,
+}
+
+type State = {
+  challange: ?ChallangeData,
+}
+
+const Index = ({ history, assets, FBInstant }: Props) => {
+  const onChallengeSend: () => void = () => {
+    history.push('sendChallenge')
   }
 
+  const onPlay: () => void = () => {
+    history.push('play')
+  }
   return (
     <Wrapper>
       <Banner src={assets.IndexBanner} alt="PhoneFly" />
       <ButtonsWrapper>
-        <Button
+        <PlayButton color={'white'} fontColor={'black'} onClick={onPlay}>
+          PLAY
+        </PlayButton>
+        <ChallengeButton
           color={'black'}
           fontColor={'white'}
-          onClick={() => history.push('play')}
+          onClick={onChallengeSend}
         >
-          PLAY
-        </Button>
-        <Button color={'white'} fontColor={'black'} onClick={invite}>
-          INVITE
-        </Button>
+          CHALLENGE
+        </ChallengeButton>
       </ButtonsWrapper>
       <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
       <Leaderboard FBInstant={FBInstant} />

@@ -97,8 +97,8 @@ const BestScore = styled.div`
   font-family: 'Capriola';
 `
 
-const ShareButton = styled(Button)`
-  width: 80%;
+const ChallangeButton = styled(Button)`
+  width: 100%;
   font-size: 6vw;
 `
 
@@ -112,8 +112,6 @@ type State = {
   startedFallingAt: ?Date,
   highestFallHeight: number,
   lastRecordAt: Date,
-  loadingBestScore: boolean,
-  bestScore: number,
   prompt: string,
   disableButtons: boolean,
   disableButtonsTimeout: ?TimeoutID,
@@ -127,8 +125,6 @@ class Play extends React.Component<Props, State> {
       startedFallingAt: null,
       highestFallHeight: 0,
       lastRecordAt: new Date(),
-      loadingBestScore: false,
-      bestScore: 0,
       prompt: 'How high can you throw your phone?',
       disableButtons: false,
       disableButtonsTimeout: null,
@@ -136,12 +132,7 @@ class Play extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { FBInstant } = this.props
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
-
-    if (FBInstant != null) {
-      this.getBestScore()
-    }
   }
 
   componentWillUnmount() {
@@ -153,7 +144,6 @@ class Play extends React.Component<Props, State> {
       startedFallingAt,
       highestFallHeight,
       lastRecordAt,
-      bestScore,
       disableButtonsTimeout,
     } = this.state
     const { FBInstant } = this.props
@@ -198,15 +188,6 @@ class Play extends React.Component<Props, State> {
         this.setState({
           highestFallHeight: heightRounded,
         })
-
-        if (bestScore < heightRounded && FBInstant != null) {
-          //Check for global high score
-          this.setBestScore(heightRounded)
-          this.setState({
-            bestScore: heightRounded,
-            prompt: 'New High Score!🥳🎉',
-          })
-        }
       }
       const newDisableButtonsTimeout = setTimeout(() => {
         //Cancel dissabled buttons
@@ -228,7 +209,6 @@ class Play extends React.Component<Props, State> {
         this.setState({
           disableButtons: true,
           disableButtonsTimeout: null,
-          prompt: 'Can you beat your high score?',
         })
       }
     }
@@ -237,79 +217,35 @@ class Play extends React.Component<Props, State> {
     })
   }
 
-  getBestScore: () => Promise<void> = async () => {
-    const { FBInstant } = this.props
-
-    this.setState({ loadingBestScore: true })
-
-    try {
-      const leaderboard = await FBInstant.getLeaderboardAsync('score')
-      const entry = await leaderboard.getPlayerEntryAsync()
-      const bestScore = entry.getScore()
-      if (bestScore) {
-        this.setState({ bestScore: bestScore / 100, loadingBestScore: false })
-      }
-    } catch (error) {
-      this.setState({ loadingBestScore: false })
-      console.log(error)
-    }
-  }
-
-  setBestScore: number => Promise<void> = async (score: number) => {
-    const { prompt } = this.state
-    const { FBInstant } = this.props
-
-    try {
-      const leaderboard = await FBInstant.getLeaderboardAsync('score')
-      const entry = await leaderboard.setScoreAsync(parseInt(score * 100))
-      this.updateInContext()
-      this.getBestScore()
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  share: () => void = () => {
-    const { bestScore, disableButtons } = this.state
+  sendChallenge: () => void = () => {
+    const { highestFallHeight, disableButtons } = this.state
     const { FBInstant, assets } = this.props
+
+    const name = FBInstant.player.getName()
 
     if (!disableButtons) {
-      FBInstant.shareAsync({
-        intent: 'SHARE',
-        image: assets.IndexBanner,
-        text: `My high score in PhoneFly is ${bestScore.toFixed(2)}m🔥`,
-      })
-    }
-  }
-
-  updateInContext: () => void = () => {
-    const { bestScore } = this.state
-    const { FBInstant, assets } = this.props
-
-    try {
-      FBInstant.updateAsync({
-        action: 'CUSTOM',
-        image: assets.IndexBanner,
-        text: {
-          default: `My new high score in PhoneFly is ${bestScore.toFixed(
+      try {
+        FBInstant.shareAsync({
+          intent: 'SHARE',
+          image: assets.IndexBanner,
+          text: `Can you beat me in a challenge? My score to beat: ${highestFallHeight.toFixed(
             2,
           )}m🔥`,
-        },
-        template: 'beat_highscore',
-      })
-    } catch (error) {
-      console.log(error)
+          data: {
+            myReplayData: {
+              challengedBy: name,
+              height: highestFallHeight,
+            },
+          },
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
   render() {
-    const {
-      highestFallHeight,
-      bestScore,
-      loadingBestScore,
-      prompt,
-      disableButtons,
-    } = this.state
+    const { highestFallHeight, prompt, disableButtons } = this.state
     const { history, assets = {} } = this.props
 
     return (
@@ -324,24 +260,21 @@ class Play extends React.Component<Props, State> {
               2,
             )}m`}</CurrentScore>
             <BestScoreWrapper>
-              <BestScore>
-                {loadingBestScore ? 'Loading...' : `Best: ${bestScore}m`}
-              </BestScore>
-              <ShareButton
+              <ChallangeButton
                 disabled={disableButtons}
-                color={'white'}
-                fontColor={'black'}
-                onClick={this.share}
+                color={'black'}
+                fontColor={'white'}
+                onClick={this.sendChallenge}
               >
-                SHARE
-              </ShareButton>
+                SEND CHALLENGE
+              </ChallangeButton>
             </BestScoreWrapper>
           </ScoreWrapper>
           <ButtonsWrapper>
             <Button
               disabled={disableButtons}
-              color={'black'}
-              fontColor={'white'}
+              color={'white'}
+              fontColor={'black'}
               onClick={() => {
                 if (!disableButtons) {
                   this.setState({ highestFallHeight: 0 })

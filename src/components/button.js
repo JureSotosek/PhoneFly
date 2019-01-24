@@ -14,7 +14,7 @@ const Button = styled.div`
   background-color: ${({ disabled, color }) =>
     disabled ? 'lightGrey' : color};
   color: ${({ disabled, fontColor }) => (disabled ? 'black' : fontColor)};
-  font-size: 8vw;
+  font-size: 7vw;
   font-family: 'Capriola';
 `
 
