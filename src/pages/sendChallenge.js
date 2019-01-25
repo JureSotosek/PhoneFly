@@ -102,9 +102,16 @@ const ChallangeButton = styled(Button)`
   font-size: 6vw;
 `
 
+type Assets = {
+  IndexBanner: string,
+  PlayBanner: string,
+  ChallengeImage: string,
+  HighScoreImage: string,
+}
+
 type Props = {
   history: RouterHistory,
-  assets: any,
+  assets: Assets,
   FBInstant: any,
 }
 
@@ -112,6 +119,8 @@ type State = {
   startedFallingAt: ?Date,
   highestFallHeight: number,
   lastRecordAt: Date,
+  loadingBestScore: boolean,
+  bestScore: number,
   prompt: string,
   disableButtons: boolean,
   disableButtonsTimeout: ?TimeoutID,
@@ -125,6 +134,8 @@ class Play extends React.Component<Props, State> {
       startedFallingAt: null,
       highestFallHeight: 0,
       lastRecordAt: new Date(),
+      loadingBestScore: false,
+      bestScore: 0,
       prompt: 'How high can you throw your phone?',
       disableButtons: false,
       disableButtonsTimeout: null,
@@ -132,7 +143,19 @@ class Play extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const { lastRecordAt } = this.state
+    const { FBInstant } = this.props
+
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
+    setTimeout(() => {
+      if (this.state.lastRecordAt === lastRecordAt) {
+        this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
+      }
+    }, 500)
+
+    if (FBInstant != null) {
+      this.getBestScore()
+    }
   }
 
   componentWillUnmount() {
@@ -145,6 +168,7 @@ class Play extends React.Component<Props, State> {
       highestFallHeight,
       lastRecordAt,
       disableButtonsTimeout,
+      bestScore,
     } = this.state
     const { FBInstant } = this.props
 
@@ -188,7 +212,16 @@ class Play extends React.Component<Props, State> {
         this.setState({
           highestFallHeight: heightRounded,
         })
+
+        if (bestScore < heightRounded && FBInstant != null) {
+          //Check for global high score
+          this.setBestScore(heightRounded)
+          this.setState({
+            bestScore: heightRounded,
+          })
+        }
       }
+
       const newDisableButtonsTimeout = setTimeout(() => {
         //Cancel dissabled buttons
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
@@ -217,18 +250,49 @@ class Play extends React.Component<Props, State> {
     })
   }
 
-  sendChallenge: () => void = () => {
+  getBestScore: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    this.setState({ loadingBestScore: true })
+
+    try {
+      const leaderboard = await FBInstant.getLeaderboardAsync('score')
+      const entry = await leaderboard.getPlayerEntryAsync()
+      const bestScore = entry.getScore()
+      if (bestScore) {
+        this.setState({ bestScore: bestScore / 100, loadingBestScore: false })
+      }
+    } catch (error) {
+      this.setState({ loadingBestScore: false })
+      console.log(error)
+    }
+  }
+
+  setBestScore: number => Promise<void> = async (score: number) => {
+    const { prompt } = this.state
+    const { FBInstant } = this.props
+
+    try {
+      const leaderboard = await FBInstant.getLeaderboardAsync('score')
+      const entry = await leaderboard.setScoreAsync(parseInt(score * 100))
+      this.getBestScore()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  sendChallenge: () => Promise<void> = async () => {
     const { highestFallHeight, disableButtons } = this.state
-    const { FBInstant, assets } = this.props
+    const { FBInstant, assets, history } = this.props
 
     const name = FBInstant.player.getName()
     const id = FBInstant.player.getID()
 
     if (!disableButtons) {
       try {
-        FBInstant.shareAsync({
+        await FBInstant.shareAsync({
           intent: 'SHARE',
-          image: assets.IndexBanner,
+          image: assets.ChallengeImage,
           text: `Can you beat me in a challenge? My score to beat: ${highestFallHeight.toFixed(
             2,
           )}m🔥`,
@@ -238,6 +302,7 @@ class Play extends React.Component<Props, State> {
             id,
           },
         })
+        history.push('')
       } catch (error) {
         console.log(error)
       }

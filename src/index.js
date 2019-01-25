@@ -10,8 +10,15 @@ import AnswerChallengePage from './pages/answerChallenge'
 
 //FB Instant
 
-const FBInstant = window.FBInstant
-const assets = window.assets
+type Assets = {
+  IndexBanner: string,
+  PlayBanner: string,
+  ChallengeImage: string,
+  HighScoreImage: string,
+}
+
+const FBInstant: any = window.FBInstant
+const assets: Assets = window.assets
 
 //React App
 

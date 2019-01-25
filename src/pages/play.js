@@ -102,9 +102,16 @@ const ShareButton = styled(Button)`
   font-size: 6vw;
 `
 
+type Assets = {
+  IndexBanner: string,
+  PlayBanner: string,
+  ChallengeImage: string,
+  HighScoreImage: string,
+}
+
 type Props = {
   history: RouterHistory,
-  assets: any,
+  assets: Assets,
   FBInstant: any,
 }
 
@@ -136,8 +143,14 @@ class Play extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const { lastRecordAt } = this.state
     const { FBInstant } = this.props
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
+    setTimeout(() => {
+      if (this.state.lastRecordAt === lastRecordAt) {
+        this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
+      }
+    }, 500)
 
     if (FBInstant != null) {
       this.getBestScore()
@@ -276,7 +289,7 @@ class Play extends React.Component<Props, State> {
     if (!disableButtons) {
       FBInstant.shareAsync({
         intent: 'SHARE',
-        image: assets.IndexBanner,
+        image: assets.HighScoreImage,
         text: `My high score in PhoneFly is ${bestScore.toFixed(2)}m🔥`,
       })
     }
@@ -289,7 +302,7 @@ class Play extends React.Component<Props, State> {
     try {
       FBInstant.updateAsync({
         action: 'CUSTOM',
-        image: assets.IndexBanner,
+        image: assets.HighScoreImage,
         text: {
           default: `My new high score in PhoneFly is ${bestScore.toFixed(
             2,

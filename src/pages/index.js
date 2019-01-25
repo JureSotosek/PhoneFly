@@ -7,14 +7,22 @@ import Button from '../components/button'
 
 import Leaderboard from '../containers/Leaderboard'
 
+const Background = styled.div`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background-color: #f9f9f9;
+`
+
 const Wrapper = styled.div`
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 100%;
-  position: absolute;
-
-  background-color: #f9f9f9;
 `
 
 const Banner = styled.img`
@@ -42,9 +50,16 @@ const ChallengeButton = styled(Button)`
   width: 55%;
 `
 
+type Assets = {
+  IndexBanner: string,
+  PlayBanner: string,
+  ChallengeImage: string,
+  HighScoreImage: string,
+}
+
 type Props = {
   history: RouterHistory,
-  assets: any,
+  assets: Assets,
   FBInstant: any,
 }
 
@@ -57,23 +72,26 @@ const Index = ({ history, assets, FBInstant }: Props) => {
     history.push('play')
   }
   return (
-    <Wrapper>
-      <Banner src={assets.IndexBanner} alt="PhoneFly" />
-      <ButtonsWrapper>
-        <PlayButton color={'white'} fontColor={'black'} onClick={onPlay}>
-          PLAY
-        </PlayButton>
-        <ChallengeButton
-          color={'black'}
-          fontColor={'white'}
-          onClick={onChallengeSend}
-        >
-          CHALLENGE
-        </ChallengeButton>
-      </ButtonsWrapper>
-      <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
-      <Leaderboard FBInstant={FBInstant} />
-    </Wrapper>
+    <>
+      <Background />
+      <Wrapper>
+        <Banner src={assets.IndexBanner} alt="PhoneFly" />
+        <ButtonsWrapper>
+          <PlayButton color={'white'} fontColor={'black'} onClick={onPlay}>
+            PLAY
+          </PlayButton>
+          <ChallengeButton
+            color={'black'}
+            fontColor={'white'}
+            onClick={onChallengeSend}
+          >
+            CHALLENGE
+          </ChallengeButton>
+        </ButtonsWrapper>
+        <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
+        <Leaderboard FBInstant={FBInstant} />
+      </Wrapper>
+    </>
   )
 }
 

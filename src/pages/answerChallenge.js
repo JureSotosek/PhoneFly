@@ -109,9 +109,16 @@ type EntryPointData = {
   id: string,
 }
 
+type Assets = {
+  IndexBanner: string,
+  PlayBanner: string,
+  ChallengeImage: string,
+  HighScoreImage: string,
+}
+
 type Props = {
   history: RouterHistory,
-  assets: any,
+  assets: Assets,
   FBInstant: any,
   entryPointData: ?EntryPointData,
 }
@@ -120,6 +127,8 @@ type State = {
   startedFallingAt: ?Date,
   highestFallHeight: number,
   lastRecordAt: Date,
+  loadingBestScore: boolean,
+  bestScore: number,
   prompt: string,
   disableButtons: boolean,
   disableButtonsTimeout: ?TimeoutID,
@@ -138,6 +147,8 @@ class AnswerChallenge extends React.Component<Props, State> {
         startedFallingAt: null,
         highestFallHeight: 0,
         lastRecordAt: new Date(),
+        loadingBestScore: false,
+        bestScore: 0,
         prompt: `${challengedBy} 🎮 challenged you. Beat their ${height.toFixed(
           2,
         )}m to send challange back🔥`,
@@ -148,7 +159,19 @@ class AnswerChallenge extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const { lastRecordAt } = this.state
+    const { FBInstant } = this.props
+
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
+    setTimeout(() => {
+      if (this.state.lastRecordAt === lastRecordAt) {
+        this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
+      }
+    }, 500)
+
+    if (FBInstant != null) {
+      this.getBestScore()
+    }
   }
 
   componentWillUnmount() {
@@ -161,6 +184,7 @@ class AnswerChallenge extends React.Component<Props, State> {
       highestFallHeight,
       lastRecordAt,
       disableButtonsTimeout,
+      bestScore,
     } = this.state
     const { FBInstant } = this.props
 
@@ -204,6 +228,14 @@ class AnswerChallenge extends React.Component<Props, State> {
         this.setState({
           highestFallHeight: heightRounded,
         })
+
+        if (bestScore < heightRounded && FBInstant != null) {
+          //Check for global high score
+          this.setBestScore(heightRounded)
+          this.setState({
+            bestScore: heightRounded,
+          })
+        }
       }
       const newDisableButtonsTimeout = setTimeout(() => {
         //Cancel dissabled buttons
@@ -233,6 +265,37 @@ class AnswerChallenge extends React.Component<Props, State> {
     })
   }
 
+  getBestScore: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    this.setState({ loadingBestScore: true })
+
+    try {
+      const leaderboard = await FBInstant.getLeaderboardAsync('score')
+      const entry = await leaderboard.getPlayerEntryAsync()
+      const bestScore = entry.getScore()
+      if (bestScore) {
+        this.setState({ bestScore: bestScore / 100, loadingBestScore: false })
+      }
+    } catch (error) {
+      this.setState({ loadingBestScore: false })
+      console.log(error)
+    }
+  }
+
+  setBestScore: number => Promise<void> = async (score: number) => {
+    const { prompt } = this.state
+    const { FBInstant } = this.props
+
+    try {
+      const leaderboard = await FBInstant.getLeaderboardAsync('score')
+      const entry = await leaderboard.setScoreAsync(parseInt(score * 100))
+      this.getBestScore()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   answerChallenge: () => void = () => {
     const { highestFallHeight, disableButtons } = this.state
     const { FBInstant, assets, history, entryPointData } = this.props
@@ -247,7 +310,7 @@ class AnswerChallenge extends React.Component<Props, State> {
       try {
         FBInstant.updateAsync({
           action: 'CUSTOM',
-          image: assets.IndexBanner,
+          image: assets.ChallengeImage,
           text: `Haa! I beat it. New score to beat: ${highestFallHeight.toFixed(
             2,
           )}m🔥`,
