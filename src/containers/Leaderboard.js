@@ -1,4 +1,6 @@
 import React from 'react'
+import type { Units } from '../types'
+import { toImperial } from '../utils'
 
 import styled from 'styled-components'
 
@@ -50,6 +52,7 @@ const UserWrapper = styled.div`
 `
 
 const UserRank = styled.div`
+  width: 4vw;
   padding: 4vw;
   padding-bottom: 5vw;
   font-size: 5vw;
@@ -87,6 +90,7 @@ type Entry = {
 
 type Props = {
   FBInstant: any,
+  units: Units,
 }
 
 type State = {
@@ -115,7 +119,7 @@ class Leaderboard extends React.Component<Props, State> {
 
   async getEntries() {
     const { meEntry } = this.state
-    const { FBInstant } = this.props
+    const { FBInstant, units } = this.props
 
     this.setState({ loadingEntries: true })
 
@@ -154,7 +158,7 @@ class Leaderboard extends React.Component<Props, State> {
   }
 
   async getMeEntry() {
-    const { FBInstant } = this.props
+    const { FBInstant, units } = this.props
 
     this.setState({ loadingMeEntry: true })
 
@@ -185,6 +189,7 @@ class Leaderboard extends React.Component<Props, State> {
 
   renderEntries(): any {
     const { entries, loadingEntries } = this.state
+    const { units } = this.props
 
     if (loadingEntries) {
       return <LoadingLeaderboardCard>Loading...</LoadingLeaderboardCard>
@@ -197,7 +202,12 @@ class Leaderboard extends React.Component<Props, State> {
             <UserImage src={entry.image} />
             <UserName>{entry.name}</UserName>
           </UserWrapper>
-          <Score>{entry.score.toFixed(2)}m</Score>
+          <Score>
+            {units === 'metric'
+              ? entry.score.toFixed(2)
+              : toImperial(entry.score)}
+            {units === 'metric' ? 'm' : '"'}
+          </Score>
         </LeaderboardCard>
       ))
     }
@@ -205,6 +215,7 @@ class Leaderboard extends React.Component<Props, State> {
 
   renderMeEntry(): any {
     const { meEntry, loadingMeEntry } = this.state
+    const { units } = this.props
 
     if (loadingMeEntry) {
       return <LoadingLeaderboardCard>Loading...</LoadingLeaderboardCard>
@@ -218,7 +229,12 @@ class Leaderboard extends React.Component<Props, State> {
               <UserImage src={meEntry.image} />
               <UserName>{meEntry.name}</UserName>
             </UserWrapper>
-            <Score>{meEntry.score.toFixed(2)}m</Score>
+            <Score>
+              {units === 'metric'
+                ? meEntry.score.toFixed(2)
+                : toImperial(meEntry.score)}
+              {units === 'metric' ? 'm' : '"'}
+            </Score>
           </MeLeaderboardCard>
         </>
       )

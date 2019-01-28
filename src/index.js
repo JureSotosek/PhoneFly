@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import type { Assets, EntryPointData } from './types'
 
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 
@@ -10,23 +11,10 @@ import AnswerChallengePage from './pages/answerChallenge'
 
 //FB Instant
 
-type Assets = {
-  IndexBanner: string,
-  PlayBanner: string,
-  ChallengeImage: string,
-  HighScoreImage: string,
-}
-
 const FBInstant: any = window.FBInstant
 const assets: Assets = window.assets
 
 //React App
-
-type EntryPointData = {
-  challengedBy: string,
-  height: number,
-  id: string,
-}
 
 const App = () => {
   const entryPointData: ?EntryPointData = FBInstant.getEntryPointData()

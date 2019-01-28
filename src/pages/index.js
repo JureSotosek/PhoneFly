@@ -1,9 +1,11 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 import type { RouterHistory } from 'react-router-dom'
+import type { Assets, Units } from '../types'
 
 import styled from 'styled-components'
 import Button from '../components/button'
+import UnitsSwitch from '../components/UnitsSwitch'
 
 import Leaderboard from '../containers/Leaderboard'
 
@@ -30,32 +32,31 @@ const Banner = styled.img`
 `
 
 const ButtonsWrapper = styled.div`
-  padding: 3vw;
+  padding: 2vw;
+  padding-bottom: 0vw;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
 `
 
 const LeaderboardTitle = styled.div`
-  margin-left: 5vw;
+  margin: 5vw;
+  margin-bottom: 0vw;
   font-size: 8vw;
   font-family: 'Capriola';
 `
 
 const PlayButton = styled(Button)`
-  width: 35%;
+  width: 38%;
 `
 
 const ChallengeButton = styled(Button)`
-  width: 55%;
+  width: 58%;
 `
 
-type Assets = {
-  IndexBanner: string,
-  PlayBanner: string,
-  ChallengeImage: string,
-  HighScoreImage: string,
-}
+const InviteButton = styled(Button)`
+  width: 48%;
+`
 
 type Props = {
   history: RouterHistory,
@@ -63,36 +64,125 @@ type Props = {
   FBInstant: any,
 }
 
-const Index = ({ history, assets, FBInstant }: Props) => {
-  const onChallengeSend: () => void = () => {
+type State = { unitsLoading: boolean, units: Units }
+
+class Index extends React.Component<Props, State> {
+  constructor() {
+    super()
+
+    this.state = {
+      unitsLoading: false,
+      units: 'metric',
+    }
+  }
+
+  componentDidMount() {
+    this.getUnits()
+  }
+
+  getUnits: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    this.setState({ unitsLoading: true })
+
+    try {
+      const data = await FBInstant.player.getDataAsync(['units'])
+      if (data.units != null) {
+        this.setState({ units: data.units })
+      }
+      this.setState({ unitsLoading: false })
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+      this.setState({ unitsLoading: false })
+    }
+  }
+
+  onChallengeSend: () => void = () => {
+    const { history } = this.props
+
     history.push('sendChallenge')
   }
 
-  const onPlay: () => void = () => {
+  onPlay: () => void = () => {
+    const { history } = this.props
+
     history.push('play')
   }
-  return (
-    <>
-      <Background />
-      <Wrapper>
-        <Banner src={assets.IndexBanner} alt="PhoneFly" />
-        <ButtonsWrapper>
-          <PlayButton color={'white'} fontColor={'black'} onClick={onPlay}>
-            PLAY
-          </PlayButton>
-          <ChallengeButton
-            color={'black'}
-            fontColor={'white'}
-            onClick={onChallengeSend}
-          >
-            CHALLENGE
-          </ChallengeButton>
-        </ButtonsWrapper>
-        <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
-        <Leaderboard FBInstant={FBInstant} />
-      </Wrapper>
-    </>
-  )
+
+  onInvite: () => void = () => {
+    const { assets, FBInstant } = this.props
+
+    try {
+      FBInstant.shareAsync({
+        intent: 'SHARE',
+        image: assets.IndexBanner,
+        text: `Check out PhoneFly🔥`,
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  onUnitsChange: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+    const { unitsLoading, units } = this.state
+
+    if (!unitsLoading) {
+      try {
+        this.setState({ unitsLoading: true })
+        await FBInstant.player.setDataAsync({
+          units: units === 'metric' ? 'imperial' : 'metric',
+        })
+        this.getUnits()
+      } catch (error) {
+        console.log(error)
+        this.setState({ unitsLoading: false })
+      }
+    }
+  }
+
+  render() {
+    const { units } = this.state
+    const { assets, FBInstant } = this.props
+
+    return (
+      <>
+        <Background />
+        <Wrapper>
+          <Banner src={assets.IndexBanner} alt="PhoneFly" />
+          <ButtonsWrapper>
+            <PlayButton
+              color={'black'}
+              fontColor={'white'}
+              onClick={this.onPlay}
+            >
+              PLAY
+            </PlayButton>
+            <ChallengeButton
+              color={'white'}
+              fontColor={'black'}
+              onClick={this.onChallengeSend}
+            >
+              CHALLENGE
+            </ChallengeButton>
+          </ButtonsWrapper>
+          <ButtonsWrapper>
+            <InviteButton
+              color={'white'}
+              fontColor={'black'}
+              onClick={this.onInvite}
+            >
+              INVITE
+            </InviteButton>
+            <UnitsSwitch units={units} onChange={this.onUnitsChange} />
+          </ButtonsWrapper>
+          <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
+          <Leaderboard FBInstant={FBInstant} units={units} />
+        </Wrapper>
+      </>
+    )
+  }
 }
 
 export default Index

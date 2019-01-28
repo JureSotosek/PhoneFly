@@ -1,6 +1,8 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
 import type { RouterHistory } from 'react-router-dom'
+import type { Assets, EntryPointData, Units } from '../types'
+import { toImperial } from '../utils'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -103,19 +105,6 @@ const ChallangeButton = styled(Button)`
   font-size: 6vw;
 `
 
-type EntryPointData = {
-  challengedBy: string,
-  height: number,
-  id: string,
-}
-
-type Assets = {
-  IndexBanner: string,
-  PlayBanner: string,
-  ChallengeImage: string,
-  HighScoreImage: string,
-}
-
 type Props = {
   history: RouterHistory,
   assets: Assets,
@@ -124,6 +113,8 @@ type Props = {
 }
 
 type State = {
+  unitsLoading: boolean,
+  units: Units,
   startedFallingAt: ?Date,
   highestFallHeight: number,
   lastRecordAt: Date,
@@ -144,6 +135,8 @@ class AnswerChallenge extends React.Component<Props, State> {
       const { challengedBy, height } = entryPointData
 
       this.state = {
+        unitsLoading: false,
+        units: 'metric',
         startedFallingAt: null,
         highestFallHeight: 0,
         lastRecordAt: new Date(),
@@ -151,7 +144,7 @@ class AnswerChallenge extends React.Component<Props, State> {
         bestScore: 0,
         prompt: `${challengedBy} 🎮 challenged you. Beat their ${height.toFixed(
           2,
-        )}m to send challange back🔥`,
+        )}m / ${toImperial(height)}" to send challange back🔥`,
         disableButtons: false,
         disableButtonsTimeout: null,
       }
@@ -161,6 +154,8 @@ class AnswerChallenge extends React.Component<Props, State> {
   componentDidMount() {
     const { lastRecordAt } = this.state
     const { FBInstant } = this.props
+
+    this.getUnits()
 
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
     setTimeout(() => {
@@ -265,6 +260,24 @@ class AnswerChallenge extends React.Component<Props, State> {
     })
   }
 
+  getUnits: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    this.setState({ unitsLoading: true })
+
+    try {
+      const data = await FBInstant.player.getDataAsync(['units'])
+      if (data.units != null) {
+        this.setState({ units: data.units })
+      }
+      this.setState({ unitsLoading: false })
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+      this.setState({ unitsLoading: false })
+    }
+  }
+
   getBestScore: () => Promise<void> = async () => {
     const { FBInstant } = this.props
 
@@ -297,7 +310,7 @@ class AnswerChallenge extends React.Component<Props, State> {
   }
 
   answerChallenge: () => void = () => {
-    const { highestFallHeight, disableButtons } = this.state
+    const { units, highestFallHeight, disableButtons } = this.state
     const { FBInstant, assets, history, entryPointData } = this.props
 
     const name = FBInstant.player.getName()
@@ -313,7 +326,7 @@ class AnswerChallenge extends React.Component<Props, State> {
           image: assets.ChallengeImage,
           text: `Haa! I beat it. New score to beat: ${highestFallHeight.toFixed(
             2,
-          )}m🔥`,
+          )}m / ${toImperial(highestFallHeight)}"🔥`,
           data: {
             challengedBy: name,
             height: highestFallHeight,
@@ -328,7 +341,7 @@ class AnswerChallenge extends React.Component<Props, State> {
   }
 
   render() {
-    const { highestFallHeight, prompt, disableButtons } = this.state
+    const { units, highestFallHeight, prompt, disableButtons } = this.state
     const { history, assets = {}, entryPointData } = this.props
 
     if (entryPointData != null) {
@@ -342,9 +355,14 @@ class AnswerChallenge extends React.Component<Props, State> {
           </TopWrapper>
           <BottomWrapper>
             <ScoreWrapper>
-              <CurrentScore>{`Score: ${highestFallHeight.toFixed(
-                2,
-              )}m`}</CurrentScore>
+              <CurrentScore>
+                {`Score: ${
+                  units === 'metric'
+                    ? highestFallHeight.toFixed(2)
+                    : toImperial(highestFallHeight)
+                }`}
+                {units === 'metric' ? 'm' : '"'}
+              </CurrentScore>
               <BestScoreWrapper>
                 <ChallangeButton
                   disabled={disableButtons || heightToBeat >= highestFallHeight}

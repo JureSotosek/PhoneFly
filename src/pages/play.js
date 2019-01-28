@@ -1,5 +1,7 @@
 import React from 'react'
 import type { RouterHistory } from 'react-router-dom'
+import type { Assets, Units } from '../types'
+import { toImperial } from '../utils'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -102,13 +104,6 @@ const ShareButton = styled(Button)`
   font-size: 6vw;
 `
 
-type Assets = {
-  IndexBanner: string,
-  PlayBanner: string,
-  ChallengeImage: string,
-  HighScoreImage: string,
-}
-
 type Props = {
   history: RouterHistory,
   assets: Assets,
@@ -116,6 +111,8 @@ type Props = {
 }
 
 type State = {
+  unitsLoading: boolean,
+  units: Units,
   startedFallingAt: ?Date,
   highestFallHeight: number,
   lastRecordAt: Date,
@@ -131,6 +128,8 @@ class Play extends React.Component<Props, State> {
     super()
 
     this.state = {
+      unitsLoading: false,
+      units: 'metric',
       startedFallingAt: null,
       highestFallHeight: 0,
       lastRecordAt: new Date(),
@@ -145,6 +144,9 @@ class Play extends React.Component<Props, State> {
   componentDidMount() {
     const { lastRecordAt } = this.state
     const { FBInstant } = this.props
+
+    this.getUnits()
+
     window.addEventListener('devicemotion', this.handleAccelerometer, true)
     setTimeout(() => {
       if (this.state.lastRecordAt === lastRecordAt) {
@@ -250,6 +252,24 @@ class Play extends React.Component<Props, State> {
     })
   }
 
+  getUnits: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    this.setState({ unitsLoading: true })
+
+    try {
+      const data = await FBInstant.player.getDataAsync(['units'])
+      if (data.units != null) {
+        this.setState({ units: data.units })
+      }
+      this.setState({ unitsLoading: false })
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+      this.setState({ unitsLoading: false })
+    }
+  }
+
   getBestScore: () => Promise<void> = async () => {
     const { FBInstant } = this.props
 
@@ -290,7 +310,9 @@ class Play extends React.Component<Props, State> {
       FBInstant.shareAsync({
         intent: 'SHARE',
         image: assets.HighScoreImage,
-        text: `My high score in PhoneFly is ${bestScore.toFixed(2)}m🔥`,
+        text: `My high score in PhoneFly is ${bestScore.toFixed(
+          2,
+        )}m / ${toImperial(bestScore)}"🔥`,
       })
     }
   }
@@ -306,7 +328,7 @@ class Play extends React.Component<Props, State> {
         text: {
           default: `My new high score in PhoneFly is ${bestScore.toFixed(
             2,
-          )}m🔥`,
+          )}m / ${toImperial(bestScore)}"🔥`,
         },
         template: 'beat_highscore',
         strategy: 'LAST',
@@ -318,6 +340,7 @@ class Play extends React.Component<Props, State> {
 
   render() {
     const {
+      units,
       highestFallHeight,
       bestScore,
       loadingBestScore,
@@ -334,12 +357,24 @@ class Play extends React.Component<Props, State> {
         </TopWrapper>
         <BottomWrapper>
           <ScoreWrapper>
-            <CurrentScore>{`Score: ${highestFallHeight.toFixed(
-              2,
-            )}m`}</CurrentScore>
+            <CurrentScore>
+              {`Score: ${
+                units === 'metric'
+                  ? highestFallHeight.toFixed(2)
+                  : toImperial(highestFallHeight)
+              }`}
+              {units === 'metric' ? 'm' : '"'}
+            </CurrentScore>
             <BestScoreWrapper>
               <BestScore>
-                {loadingBestScore ? 'Loading...' : `Best: ${bestScore}m`}
+                {loadingBestScore
+                  ? 'Loading...'
+                  : `Best: ${
+                      units === 'metric'
+                        ? bestScore.toFixed(2)
+                        : toImperial(bestScore)
+                    }`}
+                {units === 'metric' ? 'm' : '"'}
               </BestScore>
               <ShareButton
                 disabled={disableButtons}

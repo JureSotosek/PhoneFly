@@ -43,7 +43,7 @@
           for (index in assetsToDownload) {
             const asset = assetsToDownload[index]
             assets[asset] = await loadAsset(asset)
-            const progress = ((index + 1) / assetsToDownload.length + 1) * 100
+            const progress = Math.round(((index + 1) / (assetsToDownload.length + 1)) * 100)
             FBInstant.setLoadingProgress(progress)
           }
 
