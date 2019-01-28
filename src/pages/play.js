@@ -263,7 +263,6 @@ class Play extends React.Component<Props, State> {
         this.setState({ units: data.units })
       }
       this.setState({ unitsLoading: false })
-      console.log(data)
     } catch (error) {
       console.log(error)
       this.setState({ unitsLoading: false })

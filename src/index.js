@@ -19,7 +19,7 @@ const assets: Assets = window.assets
 const App = () => {
   const entryPointData: ?EntryPointData = FBInstant.getEntryPointData()
   const playerId = FBInstant.player.getID()
-  console.log(entryPointData)
+  console.log('EntryPointData:', entryPointData)
 
   return (
     <MemoryRouter

@@ -9,13 +9,24 @@ import UnitsSwitch from '../components/UnitsSwitch'
 
 import Leaderboard from '../containers/Leaderboard'
 
-const Background = styled.div`
+const BackgroundWrapper = styled.div`
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
 
+  display: flex;
+  flex-direction: column;
+`
+
+const BackgroundTop = styled.div`
+  flex: 1;
+  background-color: #9af4ef;
+`
+
+const BackgroundBottom = styled.div`
+  flex: 1;
   background-color: #f9f9f9;
 `
 
@@ -25,6 +36,8 @@ const Wrapper = styled.div`
   left: 0;
   right: 0;
   height: 100%;
+
+  background-color: #f9f9f9;
 `
 
 const Banner = styled.img`
@@ -91,7 +104,6 @@ class Index extends React.Component<Props, State> {
         this.setState({ units: data.units })
       }
       this.setState({ unitsLoading: false })
-      console.log(data)
     } catch (error) {
       console.log(error)
       this.setState({ unitsLoading: false })
@@ -148,7 +160,10 @@ class Index extends React.Component<Props, State> {
 
     return (
       <>
-        <Background />
+        <BackgroundWrapper>
+          <BackgroundTop />
+          <BackgroundBottom />
+        </BackgroundWrapper>
         <Wrapper>
           <Banner src={assets.IndexBanner} alt="PhoneFly" />
           <ButtonsWrapper>
