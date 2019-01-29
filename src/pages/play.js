@@ -189,7 +189,7 @@ class Play extends React.Component<Props, State> {
     const beta2 = Math.pow(beta, 2)
     const gamma2 = Math.pow(gamma, 2)
     const rotationTreshold =
-      z < 5 && (beta2 > 40000 || gamma2 > 40000 || alpha2 > 40000)
+      z < 4 && (beta2 > 40000 || gamma2 > 40000 || alpha2 > 40000)
 
     if (
       (accelerationTreshold || rotationTreshold) &&
