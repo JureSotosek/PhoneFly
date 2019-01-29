@@ -2,6 +2,8 @@ import React from 'react'
 import type { RouterHistory } from 'react-router-dom'
 import type { Assets, Units } from '../types'
 import { toImperial } from '../utils'
+import FallDetectionEngine from '../FallDetectionEngine'
+import type { EndedEvent } from '../FallDetectionEngine'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -104,6 +106,8 @@ const ChallangeButton = styled(Button)`
   font-size: 6vw;
 `
 
+const fallDetectionEngine = new FallDetectionEngine()
+
 type Props = {
   history: RouterHistory,
   assets: Assets,
@@ -123,7 +127,7 @@ type State = {
   disableButtonsTimeout: ?TimeoutID,
 }
 
-class Play extends React.Component<Props, State> {
+class SendChallenge extends React.Component<Props, State> {
   constructor() {
     super()
 
@@ -146,108 +150,72 @@ class Play extends React.Component<Props, State> {
     const { FBInstant } = this.props
 
     this.getUnits()
+    this.getBestScore()
 
-    window.addEventListener('devicemotion', this.handleAccelerometer, true)
-    setTimeout(() => {
-      if (this.state.lastRecordAt === lastRecordAt) {
-        this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
-      }
-    }, 500)
-
-    if (FBInstant != null) {
-      this.getBestScore()
-    }
+    fallDetectionEngine
+      .on('error', this.onSupportError)
+      .on('bigfall', this.onBigFallStarted)
+      .on('ended', this.onFallEnded)
+      .on('invalid', this.onInvalidFall)
+      .start()
   }
 
   componentWillUnmount() {
-    window.removeEventListener('devicemotion', this.handleAccelerometer, true)
+    fallDetectionEngine
+      .removeListener('error', this.onSupportError)
+      .removeListener('bigfall', this.onBigFallStarted)
+      .removeListener('ended', this.onFallEnded)
+      .removeListener('invalid', this.onInvalidFall)
+      .stop()
   }
 
-  handleAccelerometer: (event: any) => void = event => {
-    const {
-      startedFallingAt,
-      highestFallHeight,
-      lastRecordAt,
-      disableButtonsTimeout,
-      bestScore,
-    } = this.state
-    const { FBInstant } = this.props
+  onSupportError: () => void = () => {
+    this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
+  }
 
-    const {
-      x,
-      y,
-      z,
-    }: { x: number, y: number, z: number } = event.accelerationIncludingGravity
-    const {
-      alpha,
-      beta,
-      gamma,
-    }: { alpha: number, beta: number, gamma: number } = event.rotationRate
+  onBigFallStarted: () => void = () => {
+    this.setState({
+      disableButtons: true,
+      disableButtonsTimeout: null,
+    })
+  }
 
-    const accelerationTreshold = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
-    const alpha2 = Math.pow(alpha, 2)
-    const beta2 = Math.pow(beta, 2)
-    const gamma2 = Math.pow(gamma, 2)
-    const rotationTreshold =
-      z < 4 && (beta2 > 40000 || gamma2 > 40000 || alpha2 > 40000)
+  onFallEnded: (event: EndedEvent) => void = event => {
+    const { highestFallHeight, bestScore } = this.state
+    const { height } = event
 
-    if (
-      (accelerationTreshold || rotationTreshold) &&
-      startedFallingAt === null
-    ) {
-      //Fall started
-      this.setState({ startedFallingAt: new Date() })
-    } else if (
-      !accelerationTreshold &&
-      !rotationTreshold &&
-      startedFallingAt != null
-    ) {
-      //Fall finished
-      const fallLasted = new Date() - startedFallingAt
-      const sinceLastRecord = new Date() - lastRecordAt
-      const height = (9.81 * (fallLasted / 2000) ** 2) / 2
-      const heightRounded = parseInt(height * 100) / 100
-
-      if (heightRounded > highestFallHeight && sinceLastRecord < 100) {
-        //Best local score + pause bug detection
-        this.setState({
-          highestFallHeight: heightRounded,
-        })
-
-        if (bestScore < heightRounded && FBInstant != null) {
-          //Check for global high score
-          this.setBestScore(heightRounded)
-          this.setState({
-            bestScore: heightRounded,
-          })
-        }
-      }
-
-      const newDisableButtonsTimeout = setTimeout(() => {
-        //Cancel dissabled buttons
-        if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
-          this.setState({ disableButtons: false })
-        }
-      }, 750)
-
+    if (height > highestFallHeight) {
       this.setState({
-        startedFallingAt: null,
-        disableButtonsTimeout: newDisableButtonsTimeout,
+        highestFallHeight: height,
       })
-    } else if (startedFallingAt != null) {
-      //Fall in progress but not finished
-      const fallLasted = new Date() - startedFallingAt
 
-      if (fallLasted > 500) {
-        //Ignore small/accidental throws
+      if (bestScore < height) {
+        this.setBestScore(height)
         this.setState({
-          disableButtons: true,
-          disableButtonsTimeout: null,
+          bestScore: height,
         })
       }
     }
+    const newDisableButtonsTimeout = setTimeout(() => {
+      if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
+        this.setState({ disableButtons: false })
+      }
+    }, 750)
+
     this.setState({
-      lastRecordAt: new Date(),
+      disableButtonsTimeout: newDisableButtonsTimeout,
+    })
+  }
+
+  onInvalidFall: (sinceLastRecord: any) => void = sinceLastRecord => {
+    const newDisableButtonsTimeout = setTimeout(() => {
+      if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
+        this.setState({ disableButtons: false })
+      }
+    }, 750)
+
+    this.setState({
+      disableButtonsTimeout: newDisableButtonsTimeout,
     })
   }
 
@@ -390,4 +358,4 @@ class Play extends React.Component<Props, State> {
   }
 }
 
-export default Play
+export default SendChallenge
