@@ -3,7 +3,7 @@ import type { RouterHistory } from 'react-router-dom'
 import type { Assets, Units } from '../types'
 import FallDetectionEngine from '../FallDetectionEngine'
 import type { EndedEvent } from '../FallDetectionEngine'
-import { toImperial } from '../utils'
+import { toImperial, formatScore } from '../utils'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -273,9 +273,7 @@ class Play extends React.Component<Props, State> {
       FBInstant.shareAsync({
         intent: 'SHARE',
         image: assets.HighScoreImage,
-        text: `My high score in PhoneFly is ${bestScore.toFixed(
-          2,
-        )}m / ${toImperial(bestScore)}"🔥`,
+        text: `My high score in PhoneFly is ${formatScore(bestScore)}🔥`,
       })
     }
   }
@@ -289,9 +287,9 @@ class Play extends React.Component<Props, State> {
         action: 'CUSTOM',
         image: assets.HighScoreImage,
         text: {
-          default: `My new high score in PhoneFly is ${bestScore.toFixed(
-            2,
-          )}m / ${toImperial(bestScore)}"🔥`,
+          default: `My new high score in PhoneFly is ${formatScore(
+            bestScore,
+          )}🔥`,
         },
         template: 'beat_highscore',
         strategy: 'LAST',

@@ -4,7 +4,7 @@ import type { RouterHistory } from 'react-router-dom'
 import type { Assets, EntryPointData, Units } from '../types'
 import FallDetectionEngine from '../FallDetectionEngine'
 import type { EndedEvent } from '../FallDetectionEngine'
-import { toImperial } from '../utils'
+import { toImperial, formatScore } from '../utils'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -146,9 +146,9 @@ class AnswerChallenge extends React.Component<Props, State> {
         lastRecordAt: new Date(),
         loadingBestScore: false,
         bestScore: 0,
-        prompt: `${challengedBy} 🎮 challenged you. Beat their ${height.toFixed(
-          2,
-        )}m / ${toImperial(height)}" to send challange back🔥`,
+        prompt: `${challengedBy} 🎮 challenged you. Beat their ${formatScore(
+          height,
+        )} to send challange back🔥`,
         disableButtons: false,
         disableButtonsTimeout: null,
       }
@@ -292,9 +292,9 @@ class AnswerChallenge extends React.Component<Props, State> {
         FBInstant.updateAsync({
           action: 'CUSTOM',
           image: assets.ChallengeImage,
-          text: `Haa! I beat it. New score to beat: ${highestFallHeight.toFixed(
-            2,
-          )}m / ${toImperial(highestFallHeight)}"🔥`,
+          text: `Haa! I beat it. New score to beat: ${formatScore(
+            highestFallHeight,
+          )}🔥`,
           data: {
             challengedBy: name,
             height: highestFallHeight,

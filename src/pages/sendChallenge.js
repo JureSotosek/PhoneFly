@@ -1,9 +1,9 @@
 import React from 'react'
 import type { RouterHistory } from 'react-router-dom'
 import type { Assets, Units } from '../types'
-import { toImperial } from '../utils'
 import FallDetectionEngine from '../FallDetectionEngine'
 import type { EndedEvent } from '../FallDetectionEngine'
+import { toImperial, formatScore } from '../utils'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -279,9 +279,9 @@ class SendChallenge extends React.Component<Props, State> {
         await FBInstant.shareAsync({
           intent: 'SHARE',
           image: assets.ChallengeImage,
-          text: `Can you beat me in a challenge? My score to beat: ${highestFallHeight.toFixed(
-            2,
-          )}m / ${toImperial(highestFallHeight)}"🔥`,
+          text: `Can you beat me in a challenge? My score to beat: ${formatScore(
+            highestFallHeight,
+          )}🔥`,
           data: {
             challengedBy: name,
             height: highestFallHeight,
