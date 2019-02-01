@@ -13,6 +13,7 @@ const LeaderboardWrapper = styled.div`
   align-items: center;
 
   background-color: #f9f9f9;
+  font-family: 'Capriola';
 `
 
 const LeaderboardCard = styled.div`
@@ -28,7 +29,6 @@ const LeaderboardCard = styled.div`
   align-items: center;
 
   background-color: white;
-  font-family: 'Capriola';
 `
 
 const MeLeaderboardCard = styled(LeaderboardCard)`
@@ -212,6 +212,8 @@ class Leaderboard extends React.Component<Props, State> {
           </Score>
         </LeaderboardCard>
       ))
+    } else {
+      return 'No friends have play yet'
     }
   }
 
@@ -240,6 +242,8 @@ class Leaderboard extends React.Component<Props, State> {
           </MeLeaderboardCard>
         </>
       )
+    } else {
+      return "You haven't played yet"
     }
   }
 
