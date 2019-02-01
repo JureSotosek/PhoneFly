@@ -282,6 +282,7 @@ class AnswerChallenge extends React.Component<Props, State> {
     const { FBInstant, assets, history, entryPointData } = this.props
 
     const name = FBInstant.player.getName()
+    const id = FBInstant.player.getID()
 
     if (
       !disableButtons &&
@@ -298,6 +299,7 @@ class AnswerChallenge extends React.Component<Props, State> {
           data: {
             challengedBy: name,
             height: highestFallHeight,
+            id,
           },
           template: 'answer_challenge',
         })
