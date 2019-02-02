@@ -3,6 +3,7 @@ import EventEmitter from 'events'
 class FallDetectionEngine extends EventEmitter {
   startedFallingAt: ?Date = null
   lastRecordAt: ?Date = null
+  bigFallEmitted: boolean = false
 
   start: () => void = () => {
     window.addEventListener('devicemotion', this.handleDeviceMotionEvent, true)
@@ -40,8 +41,8 @@ class FallDetectionEngine extends EventEmitter {
     const betaSquared = Math.pow(beta, 2)
     const gammaSquared = Math.pow(gamma, 2)
     const rotationTreshold =
-      z < 4 &&
-      (betaSquared > 40000 || gammaSquared > 40000 || alphaSquared > 40000)
+      z < 2 &&
+      (betaSquared > 20000 || gammaSquared > 20000 || alphaSquared > 20000)
 
     let sinceLastRecord: ?number = null
     if (this.lastRecordAt != null) {
@@ -49,8 +50,9 @@ class FallDetectionEngine extends EventEmitter {
     }
     this.lastRecordAt = new Date()
 
-    if (sinceLastRecord != null && sinceLastRecord > 100) {
+    if (sinceLastRecord != null && sinceLastRecord > 50) {
       this.emit('invalid')
+      this.startedFallingAt = null
     } else if (
       (accelerationTreshold || rotationTreshold) &&
       this.startedFallingAt === null
@@ -58,6 +60,7 @@ class FallDetectionEngine extends EventEmitter {
       //Fall started
       this.startedFallingAt = new Date()
       this.emit('started')
+      this.bigFallEmitted = false
     } else if (
       !accelerationTreshold &&
       !rotationTreshold &&
@@ -74,9 +77,10 @@ class FallDetectionEngine extends EventEmitter {
       //Fall in progress but not finished
       const fallLasted = new Date() - this.startedFallingAt
 
-      if (fallLasted > 500) {
+      if (fallLasted > 500 && this.bigFallEmitted === false) {
         //Ignore small/accidental throws
         this.emit('bigfall')
+        this.bigFallEmitted = true
       }
     }
   }

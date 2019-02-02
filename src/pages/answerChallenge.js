@@ -108,6 +108,7 @@ const ChallangeButton = styled(Button)`
 `
 
 const fallDetectionEngine = new FallDetectionEngine()
+let preloadedInterstitial: any = null
 
 type Props = {
   history: RouterHistory,
@@ -127,6 +128,8 @@ type State = {
   prompt: string,
   disableButtons: boolean,
   disableButtonsTimeout: ?TimeoutID,
+  showAdd: boolean,
+  addLoaded: boolean,
 }
 
 class AnswerChallenge extends React.Component<Props, State> {
@@ -151,6 +154,8 @@ class AnswerChallenge extends React.Component<Props, State> {
         )} to send challange back🔥`,
         disableButtons: false,
         disableButtonsTimeout: null,
+        showAdd: false,
+        addLoaded: false,
       }
     }
   }
@@ -161,6 +166,7 @@ class AnswerChallenge extends React.Component<Props, State> {
 
     this.getUnits()
     this.getBestScore()
+    this.loadAdd()
 
     fallDetectionEngine
       .on('error', this.onSupportError)
@@ -184,6 +190,8 @@ class AnswerChallenge extends React.Component<Props, State> {
   }
 
   onBigFallStarted: () => void = () => {
+    this.onBigFallHandleAdd()
+
     this.setState({
       disableButtons: true,
       disableButtonsTimeout: null,
@@ -221,12 +229,75 @@ class AnswerChallenge extends React.Component<Props, State> {
     const newDisableButtonsTimeout = setTimeout(() => {
       if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
         this.setState({ disableButtons: false })
+        if (this.state.showAdd) {
+          this.showAdd()
+        }
       }
     }, 750)
 
     this.setState({
       disableButtonsTimeout: newDisableButtonsTimeout,
     })
+  }
+
+  loadAdd: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    try {
+      const interstitial = await FBInstant.getInterstitialAdAsync(
+        '746821112354806_758067227896861',
+      )
+      preloadedInterstitial = interstitial
+      await preloadedInterstitial.loadAsync()
+
+      this.setState({ addLoaded: true })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  showAdd: () => Promise<void> = async () => {
+    const { addLoaded } = this.state
+
+    if (addLoaded) {
+      try {
+        await preloadedInterstitial.showAsync()
+        this.setState({ showAdd: false, addLoaded: false })
+        this.loadAdd()
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
+  onBigFallHandleAdd: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    let bigFallCounter: ?number = null
+
+    try {
+      const data = await FBInstant.player.getDataAsync(['bigFallCounter'])
+      bigFallCounter = data.bigFallCounter
+      if (bigFallCounter != null && (bigFallCounter + 1) % 3 === 0) {
+        this.setState({ showAdd: true })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+    try {
+      if (bigFallCounter != null) {
+        await FBInstant.player.setDataAsync({
+          bigFallCounter: bigFallCounter + 1,
+        })
+      } else {
+        await FBInstant.player.setDataAsync({
+          bigFallCounter: 1,
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   getUnits: () => Promise<void> = async () => {

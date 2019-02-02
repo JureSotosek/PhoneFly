@@ -65,6 +65,7 @@ const PlayButton = styled(Button)`
 
 const ChallengeButton = styled(Button)`
   width: 58%;
+  box-shadow: 0 0 2vw #555555;
 `
 
 const InviteButton = styled(Button)`
