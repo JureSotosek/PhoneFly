@@ -53,10 +53,10 @@
 
           const bundle = document.createElement('script')
           bundle.src = 'bundle.js'
-          document.body.appendChild(bundle)
           FBInstant.setLoadingProgress(100)
+          await FBInstant.startGameAsync()
 
-          FBInstant.startGameAsync()
+          document.body.appendChild(bundle)
         })
       } else {
         const bundle = document.createElement('script')

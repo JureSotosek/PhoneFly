@@ -31,12 +31,16 @@ const LeaderboardCard = styled.div`
   background-color: white;
 `
 
-const MeLeaderboardCard = styled(LeaderboardCard)`
+const LeaderboardCardMe = styled(LeaderboardCard)`
   box-shadow: 0 0 2vw #f5a623;
 `
-const LoadingLeaderboardCard = styled(LeaderboardCard)`
+
+const LeaderboardCardLoading = styled(LeaderboardCard)`
   justify-content: center;
   font-size: 5vw;
+`
+const LeaderboardCardPlaceholder = styled.div`
+  margin-bottom: 2vw;
 `
 
 const HorizontalDivider = styled.div`
@@ -194,7 +198,7 @@ class Leaderboard extends React.Component<Props, State> {
     const { units } = this.props
 
     if (loadingEntries) {
-      return <LoadingLeaderboardCard>Loading...</LoadingLeaderboardCard>
+      return <LeaderboardCardLoading>{'Loading...'}</LeaderboardCardLoading>
     } else if (entries != null) {
       return entries.map((entry: Entry) => (
         <LeaderboardCard>
@@ -213,7 +217,11 @@ class Leaderboard extends React.Component<Props, State> {
         </LeaderboardCard>
       ))
     } else {
-      return 'No friends have play yet'
+      return (
+        <LeaderboardCardPlaceholder>
+          {'No friends have play yet'}
+        </LeaderboardCardPlaceholder>
+      )
     }
   }
 
@@ -222,11 +230,11 @@ class Leaderboard extends React.Component<Props, State> {
     const { units } = this.props
 
     if (loadingMeEntry) {
-      return <LoadingLeaderboardCard>Loading...</LoadingLeaderboardCard>
+      return <LeaderboardCardLoading>{'Loading...'}</LeaderboardCardLoading>
     } else if (meEntry != null) {
       return (
         <>
-          <MeLeaderboardCard>
+          <LeaderboardCardMe>
             <UserWrapper>
               <UserRank>{meEntry.rank || '-'}</UserRank>
               <VerticalDivider />
@@ -239,11 +247,15 @@ class Leaderboard extends React.Component<Props, State> {
                 : toImperial(meEntry.score)}
               {units === 'metric' ? 'm' : '"'}
             </Score>
-          </MeLeaderboardCard>
+          </LeaderboardCardMe>
         </>
       )
     } else {
-      return "You haven't played yet"
+      return (
+        <LeaderboardCardPlaceholder>
+          {"You haven't played yet"}
+        </LeaderboardCardPlaceholder>
+      )
     }
   }
 

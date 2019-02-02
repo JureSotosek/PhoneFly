@@ -139,7 +139,7 @@ class SendChallenge extends React.Component<Props, State> {
       lastRecordAt: new Date(),
       loadingBestScore: false,
       bestScore: 0,
-      prompt: 'How high can you throw your phone?',
+      prompt: 'Who do you want to challenge?',
       disableButtons: false,
       disableButtonsTimeout: null,
     }

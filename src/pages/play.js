@@ -77,6 +77,9 @@ const ScoreWrapper = styled.div`
   padding: 5vw;
   border-radius: 6vw;
   background-color: #f9f9f9;
+
+  box-shadow: ${({ bestScoreBroken }) =>
+    bestScoreBroken ? '0 0 2vw #f5a623' : '0 0 0'};
 `
 
 const CurrentScore = styled.div`
@@ -121,6 +124,7 @@ type State = {
   loadingBestScore: boolean,
   bestScore: number,
   prompt: string,
+  bestScoreBroken: boolean,
   disableButtons: boolean,
   disableButtonsTimeout: ?TimeoutID,
 }
@@ -136,6 +140,7 @@ class Play extends React.Component<Props, State> {
       loadingBestScore: false,
       bestScore: 0,
       prompt: 'How high can you throw your phone?',
+      bestScoreBroken: false,
       disableButtons: false,
       disableButtonsTimeout: null,
     }
@@ -173,6 +178,7 @@ class Play extends React.Component<Props, State> {
       disableButtons: true,
       disableButtonsTimeout: null,
       prompt: 'Can you beat your high score?',
+      bestScoreBroken: false,
     })
   }
 
@@ -190,6 +196,7 @@ class Play extends React.Component<Props, State> {
         this.setState({
           bestScore: height,
           prompt: 'New High Score!🥳🎉',
+          bestScoreBroken: true,
         })
       }
     }
@@ -306,6 +313,7 @@ class Play extends React.Component<Props, State> {
       bestScore,
       loadingBestScore,
       prompt,
+      bestScoreBroken,
       disableButtons,
     } = this.state
     const { history, assets = {} } = this.props
@@ -317,7 +325,7 @@ class Play extends React.Component<Props, State> {
           <Banner src={assets.PlayBanner} alt="PhoneFly" />
         </TopWrapper>
         <BottomWrapper>
-          <ScoreWrapper>
+          <ScoreWrapper bestScoreBroken={bestScoreBroken}>
             <CurrentScore>
               {`Score: ${
                 units === 'metric'
@@ -354,7 +362,10 @@ class Play extends React.Component<Props, State> {
               fontColor={'white'}
               onClick={() => {
                 if (!disableButtons) {
-                  this.setState({ highestFallHeight: 0 })
+                  this.setState({
+                    highestFallHeight: 0,
+                    bestScoreBroken: false,
+                  })
                 }
               }}
             >
