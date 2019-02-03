@@ -41,8 +41,8 @@ class FallDetectionEngine extends EventEmitter {
     const betaSquared = Math.pow(beta, 2)
     const gammaSquared = Math.pow(gamma, 2)
     const rotationTreshold =
-      z < 2 &&
-      (betaSquared > 20000 || gammaSquared > 20000 || alphaSquared > 20000)
+      z < 4 &&
+      (betaSquared > 40000 || gammaSquared > 40000 || alphaSquared > 40000)
 
     let sinceLastRecord: ?number = null
     if (this.lastRecordAt != null) {

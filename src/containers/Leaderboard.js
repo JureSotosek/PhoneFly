@@ -113,8 +113,8 @@ class Leaderboard extends React.Component<Props, State> {
     this.state = {
       meEntry: null,
       entries: null,
-      loadingMeEntry: false,
-      loadingEntries: false,
+      loadingMeEntry: true,
+      loadingEntries: true,
     }
   }
 
