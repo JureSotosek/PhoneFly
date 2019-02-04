@@ -1,6 +1,7 @@
 import React from 'react'
-import type { RouterHistory } from 'react-router-dom'
-import type { Assets, Units } from '../types'
+import { Redirect } from 'react-router-dom'
+import type { RouterHistory, Location } from 'react-router-dom'
+import type { Assets, EntryPointData, Units } from '../types'
 import FallDetectionEngine from '../FallDetectionEngine'
 import type { EndedEvent } from '../FallDetectionEngine'
 import { toImperial, formatScore } from '../utils'
@@ -31,7 +32,7 @@ const TopWrapper = styled.div`
 
 const Prompt = styled.div`
   width: 100%;
-  height: 40vw;
+  height: 50vw;
   padding: 5vw;
   box-sizing: border-box;
 
@@ -41,7 +42,7 @@ const Prompt = styled.div`
   align-items: center;
 
   text-align: center;
-  font-size: 8vw;
+  font-size: 6vw;
   font-family: 'Capriola';
 
   background-color: #f9f9f9;
@@ -111,8 +112,10 @@ let preloadedInterstitial: any = null
 
 type Props = {
   history: RouterHistory,
+  location: Location,
   assets: Assets,
   FBInstant: any,
+  entryPointData: ?EntryPointData,
 }
 
 type State = {
@@ -121,6 +124,8 @@ type State = {
   startedFallingAt: ?Date,
   highestFallHeight: number,
   lastRecordAt: Date,
+  heightToBeat: number,
+  newChallange: boolean,
   loadingBestScore: boolean,
   bestScore: number,
   prompt: string,
@@ -130,9 +135,26 @@ type State = {
   addLoaded: boolean,
 }
 
-class SendChallenge extends React.Component<Props, State> {
-  constructor() {
-    super()
+class Challenge extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+
+    const { location } = props.history
+    let heightToBeat: number = 0
+    let prompt: string = `Sending a challenge 🎮 \n Let it fly...`
+    let newChallange: boolean = true
+
+    console.log(props)
+
+    if (location.state && location.state.newChallenge === false) {
+      const { challengedBy, heightToBeat: myHeightToBeat } = location.state
+
+      heightToBeat = myHeightToBeat
+      prompt = `${challengedBy} 🎮 challenged you. Beat their ${formatScore(
+        heightToBeat,
+      )} to send the challange back🔥`
+      newChallange = false
+    }
 
     this.state = {
       unitsLoading: false,
@@ -140,9 +162,11 @@ class SendChallenge extends React.Component<Props, State> {
       startedFallingAt: null,
       highestFallHeight: 0,
       lastRecordAt: new Date(),
+      heightToBeat,
+      newChallange,
       loadingBestScore: false,
       bestScore: 0,
-      prompt: 'Who do you want to challenge?',
+      prompt,
       disableButtons: false,
       disableButtonsTimeout: null,
       showAdd: false,
@@ -207,9 +231,6 @@ class SendChallenge extends React.Component<Props, State> {
     const newDisableButtonsTimeout = setTimeout(() => {
       if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
         this.setState({ disableButtons: false })
-        if (this.state.showAdd) {
-          this.showAdd()
-        }
       }
     }, 750)
 
@@ -222,6 +243,9 @@ class SendChallenge extends React.Component<Props, State> {
     const newDisableButtonsTimeout = setTimeout(() => {
       if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
         this.setState({ disableButtons: false })
+        if (this.state.showAdd) {
+          this.showAdd()
+        }
       }
     }, 750)
 
@@ -338,26 +362,41 @@ class SendChallenge extends React.Component<Props, State> {
     }
   }
 
-  sendChallenge: () => Promise<void> = async () => {
-    const { highestFallHeight, disableButtons } = this.state
-    const { FBInstant, assets, history } = this.props
+  sendChallenge: () => void = () => {
+    const {
+      units,
+      highestFallHeight,
+      heightToBeat,
+      newChallange,
+      disableButtons,
+    } = this.state
+    const { FBInstant, assets, history, entryPointData } = this.props
 
     const name = FBInstant.player.getName()
     const id = FBInstant.player.getID()
 
-    if (!disableButtons) {
+    if (!disableButtons && highestFallHeight > heightToBeat) {
+      let text: string = `Can you beat me in a challenge? My score to beat: ${formatScore(
+        highestFallHeight,
+      )}🔥`
+
+      if (newChallange === false) {
+        text = `Haa! I beat it. New score to beat: ${formatScore(
+          highestFallHeight,
+        )}🔥`
+      }
+
       try {
-        await FBInstant.shareAsync({
-          intent: 'SHARE',
+        FBInstant.updateAsync({
+          action: 'CUSTOM',
           image: assets.ChallengeImage,
-          text: `Can you beat me in a challenge? My score to beat: ${formatScore(
-            highestFallHeight,
-          )}🔥`,
+          text,
           data: {
             challengedBy: name,
             height: highestFallHeight,
             id,
           },
+          template: 'send_challenge',
         })
         history.push('')
       } catch (error) {
@@ -367,7 +406,13 @@ class SendChallenge extends React.Component<Props, State> {
   }
 
   render() {
-    const { units, highestFallHeight, prompt, disableButtons } = this.state
+    const {
+      units,
+      highestFallHeight,
+      heightToBeat,
+      prompt,
+      disableButtons,
+    } = this.state
     const { history, assets = {} } = this.props
 
     return (
@@ -388,18 +433,18 @@ class SendChallenge extends React.Component<Props, State> {
             </CurrentScore>
             <BestScoreWrapper>
               <ChallangeButton
-                disabled={disableButtons}
+                disabled={disableButtons || heightToBeat > highestFallHeight}
                 color={'black'}
                 fontColor={'white'}
                 onClick={this.sendChallenge}
               >
-                SEND CHALLENGE
+                SEND
               </ChallangeButton>
             </BestScoreWrapper>
           </ScoreWrapper>
           <ButtonsWrapper>
             <Button
-              disabled={disableButtons}
+              disabled={disableButtons || highestFallHeight === 0}
               color={'white'}
               fontColor={'black'}
               onClick={() => {
@@ -429,4 +474,4 @@ class SendChallenge extends React.Component<Props, State> {
   }
 }
 
-export default SendChallenge
+export default Challenge

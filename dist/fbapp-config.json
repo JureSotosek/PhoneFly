@@ -7,7 +7,7 @@
       "beat_highscore": {
         "example": "My new high score is 2.00m!"
       },
-      "answer_challenge": {
+      "send_challenge": {
         "example": "Beat me in a challenge!"
       }
     }

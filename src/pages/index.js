@@ -111,10 +111,18 @@ class Index extends React.Component<Props, State> {
     }
   }
 
-  onChallengeSend: () => void = () => {
-    const { history } = this.props
+  onChallengeSend: () => Promise<void> = async () => {
+    const { FBInstant, history } = this.props
 
-    history.push('sendChallenge')
+    try {
+      await FBInstant.context.chooseAsync()
+      history.push({
+        pathname: 'challenge',
+        state: { newChallenge: true },
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   onPlay: () => void = () => {

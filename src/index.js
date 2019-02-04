@@ -6,8 +6,7 @@ import { MemoryRouter, Route, Switch } from 'react-router-dom'
 
 import IndexPage from './pages/index'
 import PlayPage from './pages/play'
-import SendChallengePage from './pages/sendChallenge'
-import AnswerChallengePage from './pages/answerChallenge'
+import ChallengePage from './pages/challenge'
 
 //FB Instant
 
@@ -21,32 +20,36 @@ const App = () => {
   const playerId = FBInstant.player.getID()
   console.log('EntryPointData:', entryPointData)
 
+  let challengedBy: string
+  let scoreToBeat: number
+  if (entryPointData != null) {
+    const { challengedBy: myChallengedBy, height } = entryPointData
+    challengedBy = myChallengedBy
+    scoreToBeat = height
+  }
+
   return (
     <MemoryRouter
-      initialEntries={['', '/answerChallenge']}
+      initialEntries={[
+        '',
+        {
+          pathname: '/challenge',
+          state: { newChallenge: false, challengedBy, scoreToBeat },
+        },
+      ]}
       initialIndex={
         entryPointData != null && entryPointData.id != playerId ? 1 : 0
       }
     >
       <Switch>
         <Route
-          path="/answerChallenge"
+          path="/challenge"
           render={({ history }) => (
-            <AnswerChallengePage
+            <ChallengePage
               history={history}
               assets={assets}
               FBInstant={FBInstant}
               entryPointData={entryPointData}
-            />
-          )}
-        />
-        <Route
-          path="/sendChallenge"
-          render={({ history }) => (
-            <SendChallengePage
-              history={history}
-              assets={assets}
-              FBInstant={FBInstant}
             />
           )}
         />

@@ -31,13 +31,14 @@ const TopWrapper = styled.div`
 
 const Prompt = styled.div`
   width: 100%;
-  height: 40vw;
+  height: 55vw;
   padding: 5vw;
+  padding-bottom: 0;
   box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 
   text-align: center;
@@ -142,7 +143,7 @@ class Play extends React.Component<Props, State> {
       highestFallHeight: 0,
       loadingBestScore: false,
       bestScore: 0,
-      prompt: 'How high can you throw your phone?',
+      prompt: 'How high 🚀 can you literally throw your phone 📱',
       bestScoreBroken: false,
       disableButtons: false,
       disableButtonsTimeout: null,
@@ -185,7 +186,7 @@ class Play extends React.Component<Props, State> {
     this.setState({
       disableButtons: true,
       disableButtonsTimeout: null,
-      prompt: 'Can you beat your high score?',
+      prompt: 'Can you beat your high score 🙌🏼',
       bestScoreBroken: false,
     })
   }
@@ -413,8 +414,7 @@ class Play extends React.Component<Props, State> {
                       units === 'metric'
                         ? bestScore.toFixed(2)
                         : toImperial(bestScore)
-                    }`}
-                {units === 'metric' ? 'm' : '"'}
+                    }${units === 'metric' ? 'm' : '"'}`}
               </BestScore>
               <ShareButton
                 disabled={disableButtons}
@@ -428,7 +428,7 @@ class Play extends React.Component<Props, State> {
           </ScoreWrapper>
           <ButtonsWrapper>
             <Button
-              disabled={disableButtons}
+              disabled={disableButtons || highestFallHeight === 0}
               color={'black'}
               fontColor={'white'}
               onClick={() => {
