@@ -112,7 +112,6 @@ let preloadedInterstitial: any = null
 
 type Props = {
   history: RouterHistory,
-  location: Location,
   assets: Assets,
   FBInstant: any,
   entryPointData: ?EntryPointData,
@@ -141,10 +140,8 @@ class Challenge extends React.Component<Props, State> {
 
     const { location } = props.history
     let heightToBeat: number = 0
-    let prompt: string = `Sending a challenge 🎮 \n Let it fly...`
+    let prompt: string = `Sending a challenge 🎮 Let it fly...`
     let newChallange: boolean = true
-
-    console.log(props)
 
     if (location.state && location.state.newChallenge === false) {
       const { challengedBy, heightToBeat: myHeightToBeat } = location.state
@@ -433,7 +430,7 @@ class Challenge extends React.Component<Props, State> {
             </CurrentScore>
             <BestScoreWrapper>
               <ChallangeButton
-                disabled={disableButtons || heightToBeat > highestFallHeight}
+                disabled={disableButtons || heightToBeat >= highestFallHeight}
                 color={'black'}
                 fontColor={'white'}
                 onClick={this.sendChallenge}

@@ -121,6 +121,12 @@ class Index extends React.Component<Props, State> {
         state: { newChallenge: true },
       })
     } catch (error) {
+      if (error.code === 'SAME_CONTEXT') {
+        history.push({
+          pathname: 'challenge',
+          state: { newChallenge: true },
+        })
+      }
       console.log(error)
     }
   }

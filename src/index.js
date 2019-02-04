@@ -21,11 +21,11 @@ const App = () => {
   console.log('EntryPointData:', entryPointData)
 
   let challengedBy: string
-  let scoreToBeat: number
+  let heightToBeat: number
   if (entryPointData != null) {
     const { challengedBy: myChallengedBy, height } = entryPointData
     challengedBy = myChallengedBy
-    scoreToBeat = height
+    heightToBeat = height
   }
 
   return (
@@ -34,7 +34,7 @@ const App = () => {
         '',
         {
           pathname: '/challenge',
-          state: { newChallenge: false, challengedBy, scoreToBeat },
+          state: { newChallenge: false, challengedBy, heightToBeat },
         },
       ]}
       initialIndex={
