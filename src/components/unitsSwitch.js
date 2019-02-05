@@ -1,4 +1,5 @@
 import React from 'react'
+import type { Units } from '../types'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -33,8 +34,6 @@ const HalfWrapper = styled.div`
   background-color: ${({ selected }) => (selected ? 'black' : 'white')};
   color: ${({ selected }) => (selected ? 'white' : 'black')};
 `
-
-type Units = 'metric' | 'imperial'
 
 type Props = { units: Units, onChange: () => Promise<void> }
 

@@ -24,6 +24,8 @@ const StyledPrompt = styled(Prompt)`
   padding-bottom: 0;
 
   justify-content: center;
+
+  font-size: 8vw;
 `
 
 const BestScore = styled.div`

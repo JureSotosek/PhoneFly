@@ -18,6 +18,10 @@ import {
   BottomScoreWrapper,
 } from '../components/playScreen'
 
+const StyledPrompt = styled(Prompt)`
+  font-size: ${({ newChallange }) => (newChallange ? '8vw' : '6vw')};
+`
+
 const ChallangeButton = styled(Button)`
   width: 100%;
   font-size: 6vw;
@@ -136,7 +140,7 @@ class Challenge extends React.Component<Props, State> {
   }
 
   render() {
-    const { units, heightToBeat, prompt } = this.state
+    const { newChallange, heightToBeat, prompt, units } = this.state
     const {
       history,
       assets,
@@ -148,7 +152,7 @@ class Challenge extends React.Component<Props, State> {
     return (
       <Wrapper>
         <TopWrapper>
-          <Prompt>{prompt}</Prompt>
+          <StyledPrompt newChallange={newChallange}>{prompt}</StyledPrompt>
           <Banner src={assets.PlayBanner} alt="PhoneFly" />
         </TopWrapper>
         <BottomWrapper>
