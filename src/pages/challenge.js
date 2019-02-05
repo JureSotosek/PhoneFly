@@ -6,99 +6,17 @@ import type { Assets, Units } from '../types'
 
 import styled from 'styled-components'
 import Button from '../components/button'
-
-const Wrapper = styled.div`
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  background-color: #9af4ef;
-`
-
-const TopWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`
-
-const Prompt = styled.div`
-  width: 100%;
-  height: 50vw;
-  padding: 5vw;
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-
-  text-align: center;
-  font-size: 6vw;
-  font-family: 'Capriola';
-
-  background-color: #f9f9f9;
-`
-
-const Banner = styled.img`
-  width: 100%;
-`
-
-const BottomWrapper = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`
-
-const ButtonsWrapper = styled.div`
-  padding: 3vw;
-  margin-bottom: 3vw;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-`
-
-const ScoreWrapper = styled.div`
-  margin-left: 5vw;
-  margin-right: 5vw;
-  margin-bottom: 2vw;
-  padding: 5vw;
-  border-radius: 6vw;
-  background-color: #f9f9f9;
-`
-
-const CurrentScore = styled.div`
-  margin-bottom: 5vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 7vw;
-  font-family: 'Capriola';
-  text-align: center;
-`
-
-const BestScoreWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`
-
-const BestScore = styled.div`
-  width: 100%;
-  text-align: center;
-  font-size: 6vw;
-  font-family: 'Capriola';
-`
+import {
+  Wrapper,
+  TopWrapper,
+  Prompt,
+  Banner,
+  BottomWrapper,
+  ButtonsWrapper,
+  ScoreWrapper,
+  CurrentScore,
+  BottomScoreWrapper,
+} from '../components/playScreen'
 
 const ChallangeButton = styled(Button)`
   width: 100%;
@@ -210,7 +128,7 @@ class Challenge extends React.Component<Props, State> {
           },
           template: 'send_challenge',
         })
-        history.push('')
+        history.push('/')
       } catch (error) {
         console.log(error)
       }
@@ -243,16 +161,16 @@ class Challenge extends React.Component<Props, State> {
               }`}
               {units === 'metric' ? 'm' : '"'}
             </CurrentScore>
-            <BestScoreWrapper>
+            <BottomScoreWrapper>
               <ChallangeButton
                 disabled={disableButtons || heightToBeat >= highestFallHeight}
                 color={'black'}
                 fontColor={'white'}
                 onClick={this.sendChallenge}
               >
-                SEND
+                {'SEND'}
               </ChallangeButton>
-            </BestScoreWrapper>
+            </BottomScoreWrapper>
           </ScoreWrapper>
           <ButtonsWrapper>
             <Button
@@ -261,7 +179,7 @@ class Challenge extends React.Component<Props, State> {
               fontColor={'black'}
               onClick={onReset}
             >
-              RESET
+              {'RESET'}
             </Button>
             <Button
               disabled={disableButtons}
@@ -269,11 +187,11 @@ class Challenge extends React.Component<Props, State> {
               fontColor={'black'}
               onClick={() => {
                 if (!disableButtons) {
-                  history.push('')
+                  history.push('/')
                 }
               }}
             >
-              BACK
+              {'BACK'}
             </Button>
           </ButtonsWrapper>
         </BottomWrapper>

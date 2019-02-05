@@ -31,7 +31,7 @@ const App = () => {
   return (
     <MemoryRouter
       initialEntries={[
-        '',
+        '/',
         {
           pathname: '/challenge',
           state: { newChallenge: false, challengedBy, heightToBeat },

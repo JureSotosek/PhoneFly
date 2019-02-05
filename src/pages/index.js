@@ -115,13 +115,13 @@ class Index extends Component<Props, State> {
     try {
       await FBInstant.context.chooseAsync()
       history.push({
-        pathname: 'challenge',
+        pathname: '/challenge',
         state: { newChallenge: true },
       })
     } catch (error) {
       if (error.code === 'SAME_CONTEXT') {
         history.push({
-          pathname: 'challenge',
+          pathname: '/challenge',
           state: { newChallenge: true },
         })
       }
@@ -132,7 +132,7 @@ class Index extends Component<Props, State> {
   onPlay: () => void = () => {
     const { history } = this.props
 
-    history.push('play')
+    history.push('/play')
   }
 
   onInvite: () => void = () => {
@@ -185,14 +185,14 @@ class Index extends Component<Props, State> {
               fontColor={'white'}
               onClick={this.onPlay}
             >
-              PLAY
+              {'PLAY'}
             </PlayButton>
             <ChallengeButton
               color={'white'}
               fontColor={'black'}
               onClick={this.onChallengeSend}
             >
-              CHALLENGE
+              {'CHALLENGE'}
             </ChallengeButton>
           </ButtonsWrapper>
           <ButtonsWrapper>
@@ -201,7 +201,7 @@ class Index extends Component<Props, State> {
               fontColor={'black'}
               onClick={this.onInvite}
             >
-              INVITE
+              {'INVITE'}
             </InviteButton>
             <UnitsSwitch units={units} onChange={this.onUnitsChange} />
           </ButtonsWrapper>
