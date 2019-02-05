@@ -1,9 +1,7 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
+import withAcceleration from '../fallDetection/withFallDetection'
 import type { RouterHistory, Location } from 'react-router-dom'
-import type { Assets, EntryPointData, Units } from '../types'
-import FallDetectionEngine from '../FallDetectionEngine'
-import type { EndedEvent } from '../FallDetectionEngine'
+import type { Assets, Units } from '../types'
 import { toImperial, formatScore } from '../utils'
 
 import styled from 'styled-components'
@@ -107,31 +105,24 @@ const ChallangeButton = styled(Button)`
   font-size: 6vw;
 `
 
-const fallDetectionEngine = new FallDetectionEngine()
-let preloadedInterstitial: any = null
-
 type Props = {
   history: RouterHistory,
   assets: Assets,
   FBInstant: any,
-  entryPointData: ?EntryPointData,
+  highestFallHeight: number,
+  bestScore: number,
+  loadingBestScore: boolean,
+  bestScoreBroken: boolean,
+  disableButtons: boolean,
+  onReset: () => void,
 }
 
 type State = {
+  newChallange: boolean,
+  heightToBeat: number,
+  prompt: string,
   unitsLoading: boolean,
   units: Units,
-  startedFallingAt: ?Date,
-  highestFallHeight: number,
-  lastRecordAt: Date,
-  heightToBeat: number,
-  newChallange: boolean,
-  loadingBestScore: boolean,
-  bestScore: number,
-  prompt: string,
-  disableButtons: boolean,
-  disableButtonsTimeout: ?TimeoutID,
-  showAdd: boolean,
-  addLoaded: boolean,
 }
 
 class Challenge extends React.Component<Props, State> {
@@ -154,161 +145,16 @@ class Challenge extends React.Component<Props, State> {
     }
 
     this.state = {
+      newChallange,
+      heightToBeat,
+      prompt,
       unitsLoading: false,
       units: 'metric',
-      startedFallingAt: null,
-      highestFallHeight: 0,
-      lastRecordAt: new Date(),
-      heightToBeat,
-      newChallange,
-      loadingBestScore: false,
-      bestScore: 0,
-      prompt,
-      disableButtons: false,
-      disableButtonsTimeout: null,
-      showAdd: false,
-      addLoaded: false,
     }
   }
 
   componentDidMount() {
-    const { lastRecordAt } = this.state
-    const { FBInstant } = this.props
-
     this.getUnits()
-    this.getBestScore()
-    this.loadAdd()
-
-    fallDetectionEngine
-      .on('error', this.onSupportError)
-      .on('bigfall', this.onBigFallStarted)
-      .on('ended', this.onFallEnded)
-      .on('invalid', this.onInvalidFall)
-      .start()
-  }
-
-  componentWillUnmount() {
-    fallDetectionEngine
-      .removeListener('error', this.onSupportError)
-      .removeListener('bigfall', this.onBigFallStarted)
-      .removeListener('ended', this.onFallEnded)
-      .removeListener('invalid', this.onInvalidFall)
-      .stop()
-  }
-
-  onSupportError: () => void = () => {
-    this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
-  }
-
-  onBigFallStarted: () => void = () => {
-    this.onBigFallHandleAdd()
-
-    this.setState({
-      disableButtons: true,
-      disableButtonsTimeout: null,
-    })
-  }
-
-  onFallEnded: (event: EndedEvent) => void = event => {
-    const { highestFallHeight, bestScore } = this.state
-    const { height } = event
-
-    if (height > highestFallHeight) {
-      this.setState({
-        highestFallHeight: height,
-      })
-
-      if (bestScore < height) {
-        this.setBestScore(height)
-        this.setState({
-          bestScore: height,
-        })
-      }
-    }
-    const newDisableButtonsTimeout = setTimeout(() => {
-      if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
-        this.setState({ disableButtons: false })
-      }
-    }, 750)
-
-    this.setState({
-      disableButtonsTimeout: newDisableButtonsTimeout,
-    })
-  }
-
-  onInvalidFall: (sinceLastRecord: any) => void = sinceLastRecord => {
-    const newDisableButtonsTimeout = setTimeout(() => {
-      if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
-        this.setState({ disableButtons: false })
-        if (this.state.showAdd) {
-          this.showAdd()
-        }
-      }
-    }, 750)
-
-    this.setState({
-      disableButtonsTimeout: newDisableButtonsTimeout,
-    })
-  }
-
-  loadAdd: () => Promise<void> = async () => {
-    const { FBInstant } = this.props
-
-    try {
-      const interstitial = await FBInstant.getInterstitialAdAsync(
-        '746821112354806_758067227896861',
-      )
-      preloadedInterstitial = interstitial
-      await preloadedInterstitial.loadAsync()
-
-      this.setState({ addLoaded: true })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  showAdd: () => Promise<void> = async () => {
-    const { addLoaded } = this.state
-
-    if (addLoaded) {
-      try {
-        await preloadedInterstitial.showAsync()
-        this.setState({ showAdd: false, addLoaded: false })
-        this.loadAdd()
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }
-
-  onBigFallHandleAdd: () => Promise<void> = async () => {
-    const { FBInstant } = this.props
-
-    let bigFallCounter: ?number = null
-
-    try {
-      const data = await FBInstant.player.getDataAsync(['bigFallCounter'])
-      bigFallCounter = data.bigFallCounter
-      if (bigFallCounter != null && (bigFallCounter + 1) % 3 === 0) {
-        this.setState({ showAdd: true })
-      }
-    } catch (error) {
-      console.log(error)
-    }
-
-    try {
-      if (bigFallCounter != null) {
-        await FBInstant.player.setDataAsync({
-          bigFallCounter: bigFallCounter + 1,
-        })
-      } else {
-        await FBInstant.player.setDataAsync({
-          bigFallCounter: 1,
-        })
-      }
-    } catch (error) {
-      console.log(error)
-    }
   }
 
   getUnits: () => Promise<void> = async () => {
@@ -328,46 +174,15 @@ class Challenge extends React.Component<Props, State> {
     }
   }
 
-  getBestScore: () => Promise<void> = async () => {
-    const { FBInstant } = this.props
-
-    this.setState({ loadingBestScore: true })
-
-    try {
-      const leaderboard = await FBInstant.getLeaderboardAsync('score')
-      const entry = await leaderboard.getPlayerEntryAsync()
-      const bestScore = entry.getScore()
-      if (bestScore) {
-        this.setState({ bestScore: bestScore / 100, loadingBestScore: false })
-      }
-    } catch (error) {
-      this.setState({ loadingBestScore: false })
-      console.log(error)
-    }
-  }
-
-  setBestScore: number => Promise<void> = async (score: number) => {
-    const { prompt } = this.state
-    const { FBInstant } = this.props
-
-    try {
-      const leaderboard = await FBInstant.getLeaderboardAsync('score')
-      const entry = await leaderboard.setScoreAsync(parseInt(score * 100))
-      this.getBestScore()
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   sendChallenge: () => void = () => {
+    const { units, heightToBeat, newChallange } = this.state
     const {
-      units,
+      FBInstant,
+      assets,
+      history,
       highestFallHeight,
-      heightToBeat,
-      newChallange,
       disableButtons,
-    } = this.state
-    const { FBInstant, assets, history, entryPointData } = this.props
+    } = this.props
 
     const name = FBInstant.player.getName()
     const id = FBInstant.player.getID()
@@ -403,14 +218,14 @@ class Challenge extends React.Component<Props, State> {
   }
 
   render() {
+    const { units, heightToBeat, prompt } = this.state
     const {
-      units,
+      history,
+      assets,
       highestFallHeight,
-      heightToBeat,
-      prompt,
       disableButtons,
-    } = this.state
-    const { history, assets = {} } = this.props
+      onReset,
+    } = this.props
 
     return (
       <Wrapper>
@@ -444,11 +259,7 @@ class Challenge extends React.Component<Props, State> {
               disabled={disableButtons || highestFallHeight === 0}
               color={'white'}
               fontColor={'black'}
-              onClick={() => {
-                if (!disableButtons) {
-                  this.setState({ highestFallHeight: 0 })
-                }
-              }}
+              onClick={onReset}
             >
               RESET
             </Button>
@@ -471,4 +282,4 @@ class Challenge extends React.Component<Props, State> {
   }
 }
 
-export default Challenge
+export default withAcceleration(Challenge)

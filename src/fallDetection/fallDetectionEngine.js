@@ -5,8 +5,13 @@ class FallDetectionEngine extends EventEmitter {
   lastRecordAt: ?Date = null
   bigFallEmitted: boolean = false
 
-  start: () => void = () => {
+  start: (FBInstant: any) => void = FBInstant => {
     window.addEventListener('devicemotion', this.handleDeviceMotionEvent, true)
+    FBInstant.onPause(() => {
+      this.emit('invalid')
+      this.startedFallingAt = null
+    })
+
     const currentDate = new Date()
     this.lastRecordAt = currentDate
     setTimeout(() => {
