@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import withAcceleration from '../fallDetection/withFallDetection'
+import { toImperial, formatScore } from '../utils'
 import type { RouterHistory, Location } from 'react-router-dom'
 import type { Assets, Units } from '../types'
-import { toImperial, formatScore } from '../utils'
 
 import styled from 'styled-components'
 import Button from '../components/button'

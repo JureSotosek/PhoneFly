@@ -1,10 +1,8 @@
-import React from 'react'
-import type { ComponentType } from 'react'
+import React, { Component, type ComponentType } from 'react'
+import FallDetectionEngine, { type EndedEvent } from './fallDetectionEngine'
+import { toImperial, formatScore } from '../utils'
 import type { RouterHistory } from 'react-router-dom'
 import type { Assets, Units } from '../types'
-import FallDetectionEngine from './fallDetectionEngine'
-import type { EndedEvent } from './fallDetectionEngine'
-import { toImperial, formatScore } from '../utils'
 
 const fallDetectionEngine = new FallDetectionEngine()
 let preloadedInterstitial: any = null
@@ -43,7 +41,7 @@ type MyComponentProps = {
 const withFallDetection: (
   MyComponent: ComponentType<MyComponentProps>,
 ) => ComponentType<Props> = MyComponent => {
-  return class extends React.Component<Props, State> {
+  return class extends Component<Props, State> {
     constructor() {
       super()
 

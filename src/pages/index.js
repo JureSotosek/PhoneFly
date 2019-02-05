@@ -1,13 +1,11 @@
-import React from 'react'
-import { Redirect } from 'react-router-dom'
-import type { RouterHistory } from 'react-router-dom'
+import React, { Component } from 'react'
+import { Redirect, type RouterHistory } from 'react-router-dom'
 import type { Assets, Units } from '../types'
 
 import styled from 'styled-components'
+import Leaderboard from '../containers/Leaderboard'
 import Button from '../components/button'
 import UnitsSwitch from '../components/UnitsSwitch'
-
-import Leaderboard from '../containers/Leaderboard'
 
 const BackgroundWrapper = styled.div`
   position: fixed;
@@ -80,7 +78,7 @@ type Props = {
 
 type State = { unitsLoading: boolean, units: Units }
 
-class Index extends React.Component<Props, State> {
+class Index extends Component<Props, State> {
   constructor() {
     super()
 

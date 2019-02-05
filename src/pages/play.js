@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import withFallDetection from '../fallDetection/withFallDetection'
+import { toImperial, formatScore } from '../utils'
 import type { RouterHistory } from 'react-router-dom'
 import type { Assets, Units } from '../types'
-import { toImperial, formatScore } from '../utils'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -127,7 +127,7 @@ type State = {
   units: Units,
 }
 
-class Play extends React.Component<Props, State> {
+class Play extends Component<Props, State> {
   constructor() {
     super()
 
