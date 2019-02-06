@@ -42,6 +42,16 @@ const Banner = styled.img`
   width: 100%;
 `
 
+const Disclamer = styled.div`
+  margin-top: 1vw;
+  margin-bottom: 2vw;
+  margin-left: 5vw;
+  margin-right: 5vw;
+  text-align: center;
+  font-size: 3.8vw;
+  font-family: 'Capriola';
+`
+
 const ButtonsWrapper = styled.div`
   padding: 2vw;
   padding-bottom: 0vw;
@@ -179,6 +189,11 @@ class Index extends Component<Props, State> {
         </BackgroundWrapper>
         <Wrapper>
           <Banner src={assets.IndexBanner} alt="PhoneFly" />
+          <Disclamer>
+            {
+              'DISCLAMER: The players themselfs are responsible for any damages that may accure.'
+            }
+          </Disclamer>
           <ButtonsWrapper>
             <PlayButton
               color={'black'}
