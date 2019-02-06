@@ -153,14 +153,6 @@ class Play extends Component<Props, State> {
           </ScoreWrapper>
           <ButtonsWrapper>
             <Button
-              disabled={disableButtons || highestFallHeight === 0}
-              color={'black'}
-              fontColor={'white'}
-              onClick={onReset}
-            >
-              {'RESET'}
-            </Button>
-            <Button
               disabled={disableButtons}
               color={'white'}
               fontColor={'black'}
@@ -171,6 +163,14 @@ class Play extends Component<Props, State> {
               }}
             >
               {'BACK'}
+            </Button>
+            <Button
+              disabled={disableButtons || highestFallHeight === 0}
+              color={'black'}
+              fontColor={'white'}
+              onClick={onReset}
+            >
+              {'RESET'}
             </Button>
           </ButtonsWrapper>
         </BottomWrapper>

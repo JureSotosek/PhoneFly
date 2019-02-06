@@ -9,9 +9,8 @@ const Button = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ disabled, color }) =>
-    disabled ? 'lightGrey' : color};
-  color: ${({ disabled, fontColor }) => (disabled ? '#696969' : fontColor)};
+  background-color: ${({ disabled, color }) => (disabled ? '#F6F6F6' : color)};
+  color: ${({ disabled, fontColor }) => (disabled ? '#C3C3C3' : fontColor)};
   font-size: 7vw;
   font-family: 'Capriola';
 `

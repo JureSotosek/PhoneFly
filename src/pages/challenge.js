@@ -53,7 +53,7 @@ class Challenge extends React.Component<Props, State> {
 
     const { location } = props.history
     let heightToBeat: number = 0
-    let prompt: string = `Sending a challenge 🎮 Let it fly...`
+    let prompt: string = `Starting a challenge 🎮 Throw your phone to send it 🚀`
     let newChallange: boolean = true
 
     if (location.state && location.state.newChallenge === false) {
@@ -178,14 +178,6 @@ class Challenge extends React.Component<Props, State> {
           </ScoreWrapper>
           <ButtonsWrapper>
             <Button
-              disabled={disableButtons || highestFallHeight === 0}
-              color={'white'}
-              fontColor={'black'}
-              onClick={onReset}
-            >
-              {'RESET'}
-            </Button>
-            <Button
               disabled={disableButtons}
               color={'white'}
               fontColor={'black'}
@@ -196,6 +188,14 @@ class Challenge extends React.Component<Props, State> {
               }}
             >
               {'BACK'}
+            </Button>
+            <Button
+              disabled={disableButtons || highestFallHeight === 0}
+              color={'white'}
+              fontColor={'black'}
+              onClick={onReset}
+            >
+              {'RESET'}
             </Button>
           </ButtonsWrapper>
         </BottomWrapper>
