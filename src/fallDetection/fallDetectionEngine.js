@@ -45,9 +45,14 @@ class FallDetectionEngine extends EventEmitter {
     const alphaSquared = Math.pow(alpha, 2)
     const betaSquared = Math.pow(beta, 2)
     const gammaSquared = Math.pow(gamma, 2)
+    const root2over2 = Math.pow(2, 0.5) / 2
+    const zAbs = Math.abs(z)
     const rotationTreshold =
-      z < 4 &&
-      (betaSquared > 40000 || gammaSquared > 40000 || alphaSquared > 40000)
+      zAbs < 6 &&
+      (betaSquared + root2over2 * alphaSquared > 150000 + zAbs * 50000 ||
+        gammaSquared + root2over2 * alphaSquared > 150000 + zAbs * 50000) &&
+      betaSquared > 9 &&
+      gammaSquared > 9
 
     let sinceLastRecord: ?number = null
     if (this.lastRecordAt != null) {
@@ -73,7 +78,7 @@ class FallDetectionEngine extends EventEmitter {
     ) {
       //Fall finished
       const fallLasted = new Date() - this.startedFallingAt
-      const height = (9.81 * (fallLasted / 2000) ** 2) / 2
+      const height = (9.81 * ((fallLasted * 1.1) / 2000) ** 2) / 2
       const heightRounded = Math.round(height * 100) / 100
 
       this.emit('ended', { height: heightRounded })

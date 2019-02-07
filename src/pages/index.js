@@ -189,11 +189,6 @@ class Index extends Component<Props, State> {
         </BackgroundWrapper>
         <Wrapper>
           <Banner src={assets.IndexBanner} alt="PhoneFly" />
-          <Disclamer>
-            {
-              'DISCLAMER: The players themselves are responsible for any damages that may occur.'
-            }
-          </Disclamer>
           <ButtonsWrapper>
             <PlayButton
               color={'black'}
