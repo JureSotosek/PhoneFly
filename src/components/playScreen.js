@@ -70,6 +70,9 @@ export const ScoreWrapper = styled.div`
   padding: 5vw;
   border-radius: 6vw;
   background-color: #f9f9f9;
+
+  box-shadow: ${({ bestScoreBroken }) =>
+    bestScoreBroken ? '0 0 2vw #f5a623' : '0 0 0'};
 `
 
 export const CurrentScore = styled.div`

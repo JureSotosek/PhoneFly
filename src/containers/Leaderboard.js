@@ -21,7 +21,8 @@ const LeaderboardCard = styled.div`
   height: 12vw;
   margin-bottom: 2vw;
   border-radius: 2vw;
-  box-shadow: 0 0.3vw 1vw #d6d6d6;
+  box-shadow: ${({ highlight }) =>
+    highlight ? '0 0 2vw #f5a623' : '0 0.3vw 1vw #d6d6d6'};
 
   display: flex;
   flex-direction: row;
@@ -29,10 +30,6 @@ const LeaderboardCard = styled.div`
   align-items: center;
 
   background-color: white;
-`
-
-const LeaderboardCardMe = styled(LeaderboardCard)`
-  box-shadow: 0 0 2vw #f5a623;
 `
 
 const LeaderboardCardLoading = styled(LeaderboardCard)`
@@ -194,28 +191,38 @@ class Leaderboard extends React.Component<Props, State> {
   }
 
   renderEntries(): any {
-    const { entries, loadingEntries } = this.state
+    const { entries, loadingEntries, meEntry } = this.state
     const { units } = this.props
+
+    let meId: ?string = null
+
+    if (meEntry != null) {
+      meId = meEntry.id
+    }
 
     if (loadingEntries) {
       return <LeaderboardCardLoading>{'Loading...'}</LeaderboardCardLoading>
     } else if (entries != null) {
-      return entries.map((entry: Entry) => (
-        <LeaderboardCard>
-          <UserWrapper>
-            <UserRank>{entry.rank}</UserRank>
-            <VerticalDivider />
-            <UserImage src={entry.image} />
-            <UserName>{entry.name}</UserName>
-          </UserWrapper>
-          <Score>
-            {units === 'metric'
-              ? entry.score.toFixed(2)
-              : toImperial(entry.score)}
-            {units === 'metric' ? 'm' : '"'}
-          </Score>
-        </LeaderboardCard>
-      ))
+      return entries.map((entry: Entry) => {
+        const id = entry.id
+
+        return (
+          <LeaderboardCard highlight={meId === id}>
+            <UserWrapper>
+              <UserRank>{entry.rank}</UserRank>
+              <VerticalDivider />
+              <UserImage src={entry.image} />
+              <UserName>{entry.name}</UserName>
+            </UserWrapper>
+            <Score>
+              {units === 'metric'
+                ? entry.score.toFixed(2)
+                : toImperial(entry.score)}
+              {units === 'metric' ? 'm' : '"'}
+            </Score>
+          </LeaderboardCard>
+        )
+      })
     } else {
       return (
         <LeaderboardCardPlaceholder>
@@ -234,7 +241,7 @@ class Leaderboard extends React.Component<Props, State> {
     } else if (meEntry != null) {
       return (
         <>
-          <LeaderboardCardMe>
+          <LeaderboardCard highlight>
             <UserWrapper>
               <UserRank>{meEntry.rank || '-'}</UserRank>
               <VerticalDivider />
@@ -247,7 +254,7 @@ class Leaderboard extends React.Component<Props, State> {
                 : toImperial(meEntry.score)}
               {units === 'metric' ? 'm' : '"'}
             </Score>
-          </LeaderboardCardMe>
+          </LeaderboardCard>
         </>
       )
     } else {

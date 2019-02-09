@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import AdManager from './adManager'
 import type { Assets, EntryPointData } from './types'
 
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
@@ -11,6 +12,7 @@ import ChallengePage from './pages/challenge'
 //FB Instant
 
 const FBInstant: any = window.FBInstant
+const adManager = new AdManager(FBInstant)
 const assets: Assets = window.assets
 
 //React App
@@ -49,6 +51,7 @@ const App = () => {
               history={history}
               assets={assets}
               FBInstant={FBInstant}
+              adManager={adManager}
               entryPointData={entryPointData}
             />
           )}
@@ -56,7 +59,12 @@ const App = () => {
         <Route
           path="/play"
           render={({ history }) => (
-            <PlayPage history={history} assets={assets} FBInstant={FBInstant} />
+            <PlayPage
+              history={history}
+              assets={assets}
+              FBInstant={FBInstant}
+              adManager={adManager}
+            />
           )}
         />
         <Route

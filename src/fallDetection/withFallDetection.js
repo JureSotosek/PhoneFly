@@ -1,28 +1,28 @@
 import React, { Component, type ComponentType } from 'react'
 import FallDetectionEngine, { type EndedEvent } from './fallDetectionEngine'
+import AdManager from '../adManager'
 import { toImperial, formatScore } from '../utils'
 import type { RouterHistory } from 'react-router-dom'
 import type { Assets, Units } from '../types'
 
 const fallDetectionEngine = new FallDetectionEngine()
-let preloadedInterstitial: any = null
 
 type Props = {
   history: RouterHistory,
   assets: Assets,
   FBInstant: any,
+  adManager: AdManager,
 }
 
 type State = {
   highestFallHeight: number,
+  throwCounter: number,
   loadingBestScore: boolean,
   bestScore: number,
   bestScoreBroken: boolean,
   prompt: string,
   disableButtons: boolean,
   disableButtonsTimeout: ?TimeoutID,
-  showAdd: boolean,
-  addLoaded: boolean,
 }
 
 type MyComponentProps = {
@@ -47,6 +47,7 @@ const withFallDetection: (
 
       this.state = {
         highestFallHeight: 0,
+        throwCounter: 0,
         loadingBestScore: false,
         bestScore: 0,
         bestScoreBroken: false,
@@ -62,7 +63,6 @@ const withFallDetection: (
       const { FBInstant } = this.props
 
       this.getBestScore()
-      this.loadAdd()
 
       fallDetectionEngine
         .on('error', this.onSupportError)
@@ -86,8 +86,6 @@ const withFallDetection: (
     }
 
     onBigFallStarted: () => void = () => {
-      this.onBigFallHandleAdd()
-
       this.setState({
         disableButtons: true,
         disableButtonsTimeout: null,
@@ -98,7 +96,7 @@ const withFallDetection: (
 
     onFallEnded: (event: EndedEvent) => void = event => {
       const { highestFallHeight, bestScore } = this.state
-      const { height } = event
+      const { height, bigFall } = event
 
       if (height > highestFallHeight) {
         this.setState({
@@ -114,12 +112,14 @@ const withFallDetection: (
           })
         }
       }
+
+      if (bigFall) {
+        this.showAd()
+      }
+
       const newDisableButtonsTimeout = setTimeout(() => {
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
-          if (this.state.showAdd) {
-            this.showAdd()
-          }
         }
       }, 750)
 
@@ -140,63 +140,17 @@ const withFallDetection: (
       })
     }
 
-    loadAdd: () => Promise<void> = async () => {
-      const { FBInstant } = this.props
+    showAd: () => Promise<void> = async () => {
+      const { throwCounter } = this.state
+      const { adManager } = this.props
 
-      try {
-        const interstitial = await FBInstant.getInterstitialAdAsync(
-          '746821112354806_758067227896861',
-        )
-        preloadedInterstitial = interstitial
-        await preloadedInterstitial.loadAsync()
-
-        this.setState({ addLoaded: true })
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    showAdd: () => Promise<void> = async () => {
-      const { addLoaded } = this.state
-
-      if (addLoaded) {
-        try {
-          await preloadedInterstitial.showAsync()
-          this.setState({ showAdd: false, addLoaded: false })
-          this.loadAdd()
-        } catch (error) {
-          console.log(error)
+      if (throwCounter % 2 === 1) {
+        const adShown = await adManager.showAd()
+        if (adShown) {
+          this.setState({ throwCounter: throwCounter + 1 })
         }
-      }
-    }
-
-    onBigFallHandleAdd: () => Promise<void> = async () => {
-      const { FBInstant } = this.props
-
-      let bigFallCounter: ?number = null
-
-      try {
-        const data = await FBInstant.player.getDataAsync(['bigFallCounter'])
-        bigFallCounter = data.bigFallCounter
-        if (bigFallCounter != null && (bigFallCounter + 1) % 3 === 0) {
-          this.setState({ showAdd: true })
-        }
-      } catch (error) {
-        console.log(error)
-      }
-
-      try {
-        if (bigFallCounter != null) {
-          await FBInstant.player.setDataAsync({
-            bigFallCounter: bigFallCounter + 1,
-          })
-        } else {
-          await FBInstant.player.setDataAsync({
-            bigFallCounter: 1,
-          })
-        }
-      } catch (error) {
-        console.log(error)
+      } else {
+        this.setState({ throwCounter: throwCounter + 1 })
       }
     }
 
