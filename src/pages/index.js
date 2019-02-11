@@ -100,6 +100,7 @@ class Index extends Component<Props, State> {
 
   componentDidMount() {
     this.getUnits()
+    this.promptShortcut()
   }
 
   getUnits: () => Promise<void> = async () => {
@@ -116,6 +117,24 @@ class Index extends Component<Props, State> {
     } catch (error) {
       console.log(error)
       this.setState({ unitsLoading: false })
+    }
+  }
+
+  promptShortcut: () => Promise<void> = async () => {
+    const { FBInstant } = this.props
+
+    try {
+      const leaderboard = await FBInstant.getLeaderboardAsync('score')
+      const meEntry = await leaderboard.getPlayerEntryAsync()
+
+      if (meEntry != null) {
+        const canCreateShortcut = await FBInstant.canCreateShortcutAsync()
+        if (canCreateShortcut) {
+          FBInstant.createShortcutAsync()
+        }
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 

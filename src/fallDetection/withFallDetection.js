@@ -113,13 +113,12 @@ const withFallDetection: (
         }
       }
 
-      if (bigFall) {
-        this.showAd()
-      }
-
       const newDisableButtonsTimeout = setTimeout(() => {
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
+          if (bigFall) {
+            this.showAd()
+          }
         }
       }, 750)
 
