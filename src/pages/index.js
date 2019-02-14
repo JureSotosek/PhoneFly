@@ -48,7 +48,7 @@ const Disclamer = styled.div`
   margin-left: 5vw;
   margin-right: 5vw;
   text-align: center;
-  font-size: 3.8vw;
+  font-size: 4vw;
   font-family: 'Capriola';
 `
 
@@ -209,9 +209,9 @@ class Index extends Component<Props, State> {
         <Wrapper>
           <Banner src={assets.IndexBanner} alt="PhoneFly" />
           <Disclamer>
-            {
-              'DISCLAMER: The players themselves are responsible for any damages that may occur.'
-            }
+            {'Made by '}
+            <a href="https://github.com/juresotosek">{'@juresotosek'}</a>
+            {', not 🙅🏽‍♂️ responsible for any damages that may occur❗️'}
           </Disclamer>
           <ButtonsWrapper>
             <PlayButton

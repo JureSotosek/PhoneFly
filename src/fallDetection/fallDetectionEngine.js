@@ -48,7 +48,7 @@ class FallDetectionEngine extends EventEmitter {
     const root2over2 = Math.pow(2, 0.5) / 2
     const zAbs = Math.abs(z)
     const rotationTreshold =
-      zAbs < 7 &&
+      zAbs < 8 &&
       (betaSquared + root2over2 * alphaSquared > 80000 + zAbs * 60000 ||
         gammaSquared + root2over2 * alphaSquared > 80000 + zAbs * 60000)
 
