@@ -60,9 +60,10 @@ const withFallDetection: (
     }
 
     componentDidMount() {
-      const { FBInstant } = this.props
+      const { FBInstant, adManager } = this.props
 
       this.getBestScore()
+      adManager.showAd()
 
       fallDetectionEngine
         .on('error', this.onSupportError)
@@ -96,6 +97,7 @@ const withFallDetection: (
 
     onFallEnded: (event: EndedEvent) => void = event => {
       const { highestFallHeight, bestScore } = this.state
+      const { adManager } = this.props
       const { height, bigFall } = event
 
       if (height > highestFallHeight) {
@@ -117,7 +119,7 @@ const withFallDetection: (
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
           if (bigFall) {
-            this.showAd()
+            adManager.showAd()
           }
         }
       }, 750)
@@ -137,20 +139,6 @@ const withFallDetection: (
       this.setState({
         disableButtonsTimeout: newDisableButtonsTimeout,
       })
-    }
-
-    showAd: () => Promise<void> = async () => {
-      const { throwCounter } = this.state
-      const { adManager } = this.props
-
-      if (throwCounter % 2 === 1) {
-        const adShown = await adManager.showAd()
-        if (adShown) {
-          this.setState({ throwCounter: throwCounter + 1 })
-        }
-      } else {
-        this.setState({ throwCounter: throwCounter + 1 })
-      }
     }
 
     getBestScore: () => Promise<void> = async () => {

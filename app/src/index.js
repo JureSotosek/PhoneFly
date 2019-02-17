@@ -74,6 +74,7 @@ const App = () => {
               history={history}
               assets={assets}
               FBInstant={FBInstant}
+              adManager={adManager}
             />
           )}
         />

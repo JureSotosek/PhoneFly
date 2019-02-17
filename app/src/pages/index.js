@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Redirect, type RouterHistory } from 'react-router-dom'
+import type AdManager from '../adManager'
 import type { Assets, Units } from '../types'
 
 import styled from 'styled-components'
@@ -84,6 +85,7 @@ type Props = {
   history: RouterHistory,
   assets: Assets,
   FBInstant: any,
+  adManager: AdManager,
 }
 
 type State = { unitsLoading: boolean, units: Units }
@@ -99,6 +101,9 @@ class Index extends Component<Props, State> {
   }
 
   componentDidMount() {
+    const { adManager } = this.props
+
+    adManager.showAd()
     this.getUnits()
     this.promptShortcut()
   }

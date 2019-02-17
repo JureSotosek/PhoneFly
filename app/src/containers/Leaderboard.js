@@ -128,7 +128,7 @@ class Leaderboard extends React.Component<Props, State> {
 
     try {
       const leaderboard = await FBInstant.getLeaderboardAsync('score')
-      const entries = await leaderboard.getConnectedPlayerEntriesAsync(100, 0)
+      const entries = await leaderboard.getConnectedPlayerEntriesAsync(99, 0)
 
       const normalizedEntries: Entry[] = entries.map(entry => {
         const player = entry.getPlayer()

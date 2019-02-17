@@ -18,7 +18,7 @@ class FallDetectionEngine extends EventEmitter {
       if (this.lastRecordAt === currentDate) {
         this.emit('error')
       }
-    }, 500)
+    }, 1000)
   }
 
   stop: () => void = () => {

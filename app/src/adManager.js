@@ -32,6 +32,7 @@ class AdManager {
         this.loadAd()
       } catch (error) {
         console.log(error)
+        return false
       }
       return true
     } else {
