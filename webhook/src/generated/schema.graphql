@@ -1,0 +1,98 @@
+# source: http://localhost:4000
+# timestamp: Wed Nov 14 2018 16:26:12 GMT+0100 (CET)
+
+type Channel {
+  id: ID!
+  slackId: String!
+  workspace: Workspace!
+  competition: CompetitionConfig
+  engagement: EngagementConfig
+  kudos: [Kudo!]!
+}
+
+type ChannelStatsPayload {
+  kudosExchanged: Int!
+  mostKudosReceivedBy: [MemberWithCount!]!
+  mostKudosSentBy: [MemberWithCount!]!
+  timePeriod: TimePeriod!
+}
+
+type CompetitionConfig {
+  id: ID!
+  channel: Channel!
+  startedAt: String!
+  endsAt: String!
+  timePeriod: TimePeriod!
+}
+
+type EngagementConfig {
+  id: ID!
+  channel: Channel!
+  timePeriod: TimePeriod!
+}
+
+type Kudo {
+  id: ID!
+  workspace: Workspace!
+  channel: Channel!
+  sentBy: Member!
+  receivedBy: Member!
+}
+
+type LeaderboardPayload {
+  mostKudosReceivedBy: [MemberWithCount!]!
+  mostKudosSentBy: [MemberWithCount!]!
+  competitionConfig: CompetitionConfig!
+}
+
+type Member {
+  id: ID!
+  slackId: String!
+  workspace: Workspace!
+  kudosSent: [Kudo!]!
+  kudosReceived: [Kudo!]!
+}
+
+type MemberStatsPayload {
+  kudosExchanged: Int!
+  kudosSent: Int!
+  kudosReceived: Int!
+  mostKudosReceivedFrom: [MemberWithCount!]!
+  mostKudosSentTo: [MemberWithCount!]!
+  timePeriod: TimePeriod!
+}
+
+type MemberWithCount {
+  member: Member!
+  count: Int!
+}
+
+type Mutation {
+  giveKudo(senderId: String!, recepientId: String!, channelId: String!, workspaceId: String!): Kudo!
+  startCompetition(channelId: String!, memberId: String!, workspaceId: String!, timePeriod: TimePeriod!): Boolean!
+  toggleEngagement(channelId: String!, memberId: String!, workspaceId: String): Boolean!
+}
+
+type Query {
+  kudo(id: ID!): Kudo
+  leaderboard(channelId: String!): LeaderboardPayload
+  channelStats(channelId: String!, timePeriod: TimePeriod!): ChannelStatsPayload
+  memberStats(memberId: String!, timePeriod: TimePeriod!): MemberStatsPayload
+}
+
+enum TimePeriod {
+  DAY
+  WEEK
+  MONTH
+  HALF_YEAR
+  YEAR
+  ALL_TIME
+}
+
+type Workspace {
+  id: ID!
+  slackId: String!
+  channels: [Channel!]!
+  members: [Member!]!
+  kudos: [Kudo!]!
+}

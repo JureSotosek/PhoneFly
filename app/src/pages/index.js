@@ -169,15 +169,16 @@ class Index extends Component<Props, State> {
     history.push('/play')
   }
 
-  onInvite: () => void = () => {
+  onInvite: () => Promise<void> = async () => {
     const { assets, FBInstant } = this.props
 
     try {
-      FBInstant.shareAsync({
+      await FBInstant.shareAsync({
         intent: 'SHARE',
         image: assets.IndexBanner,
         text: `Check out PhoneFly🔥`,
       })
+      FBInstant.logEvent('inviteSent')
     } catch (error) {
       console.log(error)
     }

@@ -97,8 +97,12 @@ const withFallDetection: (
 
     onFallEnded: (event: EndedEvent) => void = event => {
       const { highestFallHeight, bestScore } = this.state
-      const { adManager } = this.props
+      const { FBInstant, adManager } = this.props
       const { height, bigFall } = event
+
+      FBInstant.logEvent('throw', height, {
+        height,
+      })
 
       if (height > highestFallHeight) {
         this.setState({

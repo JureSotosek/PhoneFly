@@ -96,7 +96,7 @@ class Challenge extends React.Component<Props, State> {
     }
   }
 
-  sendChallenge: () => void = () => {
+  sendChallenge: () => Promise<void> = async () => {
     const { units, heightToBeat, newChallange } = this.state
     const {
       FBInstant,
@@ -121,7 +121,7 @@ class Challenge extends React.Component<Props, State> {
       }
 
       try {
-        FBInstant.updateAsync({
+        await FBInstant.updateAsync({
           action: 'CUSTOM',
           image: assets.ChallengeImage,
           text,
@@ -132,6 +132,7 @@ class Challenge extends React.Component<Props, State> {
           },
           template: 'send_challenge',
         })
+        FBInstant.logEvent('challengeSent')
         history.push('/')
       } catch (error) {
         console.log(error)
