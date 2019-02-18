@@ -1,4 +1,4 @@
-endpoint: ${env:PHONEFLY_PRISMA_ENDPOINT}
+endpoint: ${env:PRISMA_ENDPOINT}
 
 datamodel: datamodel.graphql
 
@@ -7,4 +7,4 @@ hooks:
     - graphql get-schema --project database
     - graphql codegen
 
-secret: ${env:PHONEFLY_PRISMA_SECRET}
+secret: ${env:PRISMA_SECRET}

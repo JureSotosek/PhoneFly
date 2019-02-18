@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import AdManager from './adManager'
-import Client from './graphql/client'
 import type { Assets, EntryPointData } from './types'
 
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
@@ -15,10 +14,6 @@ import ChallengePage from './pages/challenge'
 const FBInstant: any = window.FBInstant
 const adManager = new AdManager(FBInstant)
 const assets: Assets = window.assets
-const client = new Client({
-  endpoint: 'https://phonefly-api.now.sh/',
-  debug: true,
-})
 
 //React App
 
@@ -80,7 +75,6 @@ const App = () => {
               assets={assets}
               FBInstant={FBInstant}
               adManager={adManager}
-              client={client}
             />
           )}
         />

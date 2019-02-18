@@ -1,9 +1,8 @@
 {
-  "name": "phonefly",
+  "name": "server",
   "scripts": {
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "dev": "npm-run-all --parallel start playground",
-    "now-start": "node ./dist",
     "debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect src/index.ts",
     "playground": "graphql playground",
     "build": "rimraf dist && tsc"
@@ -11,22 +10,21 @@
   "dependencies": {
     "bcryptjs": "2.4.3",
     "crypto-js": "^3.1.9-1",
-    "graphql-yoga": "1.16.7",
-    "jsonwebtoken": "8.3.0",
-    "prisma-binding": "2.1.6",
-    "serve": "^10.1.2"
+    "graphql-yoga": "1.17.4",
+    "jsonwebtoken": "8.4.0",
+    "prisma-binding": "2.3.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.2",
     "dotenv-cli": "1.4.0",
-    "graphql-cli": "2.17.0",
-    "graphqlgen": "^0.3.0",
-    "nodemon": "1.18.6",
-    "npm-run-all": "4.1.3",
-    "prisma": "1.20.1",
-    "rimraf": "2.6.2",
-    "ts-node": "6.2.0",
-    "typescript": "2.9.2"
+    "graphql-cli": "3.0.10",
+    "graphqlgen": "^0.6.0-rc8",
+    "nodemon": "1.18.10",
+    "npm-run-all": "4.1.5",
+    "prisma": "1.26.6",
+    "rimraf": "2.6.3",
+    "ts-node": "8.0.2",
+    "typescript": "3.3.3"
   },
   "resolutions": {
     "graphql-yoga/**/graphql": "0.13.2",
