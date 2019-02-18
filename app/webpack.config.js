@@ -21,7 +21,6 @@ module.exports = {
           },
         ],
       },
-      { test: /\.graphql?$/, loader: 'webpack-graphql-loader' },
     ],
   },
   resolve: {
@@ -37,8 +36,5 @@ module.exports = {
     contentBase: './dist',
     hot: true,
     historyApiFallback: true,
-  },
-  node: {
-    fs: 'empty',
   },
 }

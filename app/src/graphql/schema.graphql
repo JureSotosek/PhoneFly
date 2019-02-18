@@ -1,5 +1,5 @@
 # source: https://phonefly-api.now.sh/
-# timestamp: Mon Feb 18 2019 12:11:41 GMT+0100 (Central European Standard Time)
+# timestamp: Mon Feb 18 2019 11:48:21 GMT+0100 (Central European Standard Time)
 
 type Challenge {
   id: ID!
