@@ -15,10 +15,10 @@ import ChallengePage from './pages/challenge'
 const FBInstant: any = window.FBInstant
 const adManager = new AdManager(FBInstant)
 const assets: Assets = window.assets
-const client = new Client({
-  endpoint: 'https://phonefly-api.now.sh/',
-  debug: true,
-})
+// const client = new Client({
+//   endpoint: 'https://phonefly-api.now.sh/',
+//   debug: true,
+// })
 
 //React App
 
@@ -80,7 +80,7 @@ const App = () => {
               assets={assets}
               FBInstant={FBInstant}
               adManager={adManager}
-              client={client}
+              //client={client}
             />
           )}
         />

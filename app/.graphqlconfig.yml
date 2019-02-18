@@ -5,7 +5,7 @@ projects:
       endpoints:
         default: https://phonefly-api.now.sh/
       codegen:
-        - generator: graphql-binding
-          language: flow
+        - generator: prisma-binding
+          language: javascript
           output:
             binding: src/graphql/client.js
