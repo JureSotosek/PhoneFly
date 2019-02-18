@@ -1,0 +1,27 @@
+# source: https://phonefly-api.now.sh/
+# timestamp: Mon Feb 18 2019 11:48:21 GMT+0100 (Central European Standard Time)
+
+type Challenge {
+  id: ID!
+  score: Float!
+  challengeSender: Player
+  challengeReceivers: [Player!]!
+  answered: Boolean!
+}
+
+type Mutation {
+  sendChallenge(senderId: String!, receiverId: String!, score: Float!, signature: String!): Challenge!
+  answerChallenge(challengeId: String!, score: Float!, signature: String!): Challenge!
+}
+
+type Player {
+  id: ID!
+  FacebookID: String!
+  highScore: Float
+  sentChallenges: [Challenge!]!
+  pendingChallenges: [Challenge!]!
+}
+
+type Query {
+  pendingChallenges(playerId: String!, signature: String!): [Challenge!]!
+}

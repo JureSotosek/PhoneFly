@@ -34,12 +34,8 @@ export const Mutation: MutationResolvers.Type = {
     checkSignature(signature)
 
     const {
-      challengeSender: {
-        id: { senderId },
-      },
-      challengeReceiver: {
-        id: { receiverId },
-      },
+      challengeSender: { id: senderId },
+      challengeReceiver: { id: receiverId },
     } = await ctx.prisma.mutation.updateChallenge(
       {
         where: { id: challengeId },

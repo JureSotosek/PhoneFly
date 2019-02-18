@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Redirect, type RouterHistory } from 'react-router-dom'
 import type AdManager from '../adManager'
 import type { Assets, Units } from '../types'
+import type { Client } from '../graphql/client'
 
 import styled from 'styled-components'
 import Leaderboard from '../containers/Leaderboard'
@@ -86,6 +87,7 @@ type Props = {
   assets: Assets,
   FBInstant: any,
   adManager: AdManager,
+  client: Client,
 }
 
 type State = { unitsLoading: boolean, units: Units }

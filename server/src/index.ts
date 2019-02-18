@@ -8,10 +8,10 @@ const server = new GraphQLServer({
   context: req => ({
     ...req,
     prisma: new Prisma({
-      endpoint: process.env.PRISMA_ENDPOINT,
+      endpoint: process.env.PHONEFLY_PRISMA_ENDPOINT,
       debug: true,
-      secret: process.env.PRISMA_SECRET,
+      secret: process.env.PHONEFLY_PRISMA_SECRET,
     }),
   }),
 })
-server.start(() => console.log('Server is running on http://localhost:4000'))
+server.start(() => console.log('Server is running on port 4000'))

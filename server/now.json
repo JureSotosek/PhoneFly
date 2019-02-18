@@ -1,0 +1,9 @@
+{
+  "name": "phonefly-api",
+  "alias": "phonefly-api.now.sh",
+  "env": {
+    "PHONEFLY_PRISMA_ENDPOINT": "https://phonefly-296dd10a7e.herokuapp.com/phonefly/prod",
+    "PHONEFLY_PRISMA_SECRET": "@phonefly-prisma-secret",
+    "PHONEFLY_FACEBOOK_SECRET": "@phonefly-facebook-secret"
+  }
+}

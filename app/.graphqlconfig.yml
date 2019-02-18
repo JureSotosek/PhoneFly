@@ -1,0 +1,11 @@
+projects:
+  app:
+    schemaPath: src/graphql/schema.graphql
+    extensions:
+      endpoints:
+        default: https://phonefly-api.now.sh/
+      codegen:
+        - generator: graphql-binding
+          language: flow
+          output:
+            binding: src/graphql/client.js
