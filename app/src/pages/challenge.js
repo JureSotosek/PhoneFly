@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import withAcceleration from '../fallDetection/withFallDetection'
 import { toImperial, formatScore } from '../utils'
-import type { RouterHistory, Location } from 'react-router-dom'
-import type { Assets, Units } from '../types'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -27,34 +25,14 @@ const ChallangeButton = styled(Button)`
   font-size: 6vw;
 `
 
-type Props = {
-  history: RouterHistory,
-  assets: Assets,
-  FBInstant: any,
-  highestFallHeight: number,
-  bestScore: number,
-  loadingBestScore: boolean,
-  bestScoreBroken: boolean,
-  disableButtons: boolean,
-  onReset: () => void,
-}
-
-type State = {
-  newChallange: boolean,
-  heightToBeat: number,
-  prompt: string,
-  unitsLoading: boolean,
-  units: Units,
-}
-
-class Challenge extends React.Component<Props, State> {
-  constructor(props: Props) {
+class Challenge extends React.Component {
+  constructor(props) {
     super(props)
 
     const { location } = props.history
-    let heightToBeat: number = 0
-    let prompt: string = `Starting a challenge 🎮 Throw your phone to send it 🚀`
-    let newChallange: boolean = true
+    let heightToBeat = 0
+    let prompt = `Starting a challenge 🎮 Throw your phone to send it 🚀`
+    let newChallange = true
 
     if (location.state && location.state.newChallenge === false) {
       const { challengedBy, heightToBeat: myHeightToBeat } = location.state
@@ -79,7 +57,7 @@ class Challenge extends React.Component<Props, State> {
     this.getUnits()
   }
 
-  getUnits: () => Promise<void> = async () => {
+  getUnits = async () => {
     const { FBInstant } = this.props
 
     this.setState({ unitsLoading: true })
@@ -96,7 +74,7 @@ class Challenge extends React.Component<Props, State> {
     }
   }
 
-  sendChallenge: () => Promise<void> = async () => {
+  sendChallenge = async () => {
     const { units, heightToBeat, newChallange } = this.state
     const {
       FBInstant,
@@ -110,7 +88,7 @@ class Challenge extends React.Component<Props, State> {
     const id = FBInstant.player.getID()
 
     if (!disableButtons && highestFallHeight > heightToBeat) {
-      let text: string = `Can you beat me in a challenge? My score to beat: ${formatScore(
+      let text = `Can you beat me in a challenge? My score to beat: ${formatScore(
         highestFallHeight,
       )}🔥`
 

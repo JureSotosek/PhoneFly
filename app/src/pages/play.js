@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import withFallDetection from '../fallDetection/withFallDetection'
 import { toImperial, formatScore } from '../utils'
-import type { RouterHistory } from 'react-router-dom'
-import type { Assets, Units } from '../types'
 
 import styled from 'styled-components'
 import Button from '../components/button'
@@ -40,25 +38,7 @@ const ShareButton = styled(Button)`
   font-size: 6vw;
 `
 
-type Props = {
-  history: RouterHistory,
-  assets: Assets,
-  FBInstant: any,
-  highestFallHeight: number,
-  bestScore: number,
-  loadingBestScore: boolean,
-  prompt: string,
-  bestScoreBroken: boolean,
-  disableButtons: boolean,
-  onReset: () => void,
-}
-
-type State = {
-  unitsLoading: boolean,
-  units: Units,
-}
-
-class Play extends Component<Props, State> {
+class Play extends Component {
   constructor() {
     super()
 
@@ -72,7 +52,7 @@ class Play extends Component<Props, State> {
     this.getUnits()
   }
 
-  getUnits: () => Promise<void> = async () => {
+  getUnits = async () => {
     const { FBInstant } = this.props
 
     this.setState({ unitsLoading: true })
@@ -89,7 +69,7 @@ class Play extends Component<Props, State> {
     }
   }
 
-  share: () => void = () => {
+  share = () => {
     const { FBInstant, assets, bestScore, disableButtons } = this.props
 
     if (!disableButtons) {

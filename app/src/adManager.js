@@ -1,9 +1,9 @@
 class AdManager {
-  FBInstant: any
-  adLoaded: boolean
-  preloadedInterstitial: any = null
+  FBInstant
+  adLoaded
+  preloadedInterstitial = null
 
-  constructor(FBInstant: any) {
+  constructor(FBInstant) {
     this.FBInstant = FBInstant
 
     this.loadAd()

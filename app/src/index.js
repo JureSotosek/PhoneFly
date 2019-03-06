@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import AdManager from './adManager'
-import type { Assets, EntryPointData } from './types'
 
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 
@@ -11,19 +10,19 @@ import ChallengePage from './pages/challenge'
 
 //FB Instant
 
-const FBInstant: any = window.FBInstant
+const FBInstant = window.FBInstant
 const adManager = new AdManager(FBInstant)
-const assets: Assets = window.assets
+const assets = window.assets
 
 //React App
 
 const App = () => {
-  const entryPointData: ?EntryPointData = FBInstant.getEntryPointData()
+  const entryPointData = FBInstant.getEntryPointData()
   const playerId = FBInstant.player.getID()
   console.log('EntryPointData:', entryPointData)
 
-  let challengedBy: string
-  let heightToBeat: number
+  let challengedBy
+  let heightToBeat
   if (entryPointData != null) {
     const { challengedBy: myChallengedBy, height } = entryPointData
     challengedBy = myChallengedBy

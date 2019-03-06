@@ -1,5 +1,4 @@
 import React from 'react'
-import type { Units } from '../types'
 import { toImperial } from '../utils'
 
 import styled from 'styled-components'
@@ -83,27 +82,7 @@ const Score = styled.div`
   font-size: 4.5vw;
 `
 
-type Entry = {
-  rank: ?number,
-  name: string,
-  image: string,
-  score: number,
-  id: string,
-}
-
-type Props = {
-  FBInstant: any,
-  units: Units,
-}
-
-type State = {
-  meEntry: ?Entry,
-  entries: ?(Entry[]),
-  loadingMeEntry: boolean,
-  loadingEntries: boolean,
-}
-
-class Leaderboard extends React.Component<Props, State> {
+class Leaderboard extends React.Component {
   constructor() {
     super()
 
@@ -130,7 +109,7 @@ class Leaderboard extends React.Component<Props, State> {
       const leaderboard = await FBInstant.getLeaderboardAsync('score')
       const entries = await leaderboard.getConnectedPlayerEntriesAsync(99, 0)
 
-      const normalizedEntries: Entry[] = entries.map(entry => {
+      const normalizedEntries = entries.map(entry => {
         const player = entry.getPlayer()
         const rank = entry.getRank()
         const name = player.getName()
@@ -176,7 +155,7 @@ class Leaderboard extends React.Component<Props, State> {
       const score = meEntry.getScore() / 100
       const id = player.getID()
 
-      const normalizedMeEntry: Entry = {
+      const normalizedMeEntry = {
         rank,
         name,
         image,
@@ -190,11 +169,11 @@ class Leaderboard extends React.Component<Props, State> {
     }
   }
 
-  renderEntries(): any {
+  renderEntries() {
     const { entries, loadingEntries, meEntry } = this.state
     const { units } = this.props
 
-    let meId: ?string = null
+    let meId = null
 
     if (meEntry != null) {
       meId = meEntry.id
@@ -203,7 +182,7 @@ class Leaderboard extends React.Component<Props, State> {
     if (loadingEntries) {
       return <LeaderboardCardLoading>{'Loading...'}</LeaderboardCardLoading>
     } else if (entries != null) {
-      return entries.map((entry: Entry) => {
+      return entries.map(entry => {
         const id = entry.id
 
         return (
@@ -232,7 +211,7 @@ class Leaderboard extends React.Component<Props, State> {
     }
   }
 
-  renderMeEntry(): any {
+  renderMeEntry() {
     const { meEntry, loadingMeEntry } = this.state
     const { units } = this.props
 

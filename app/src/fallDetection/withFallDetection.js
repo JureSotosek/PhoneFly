@@ -1,47 +1,12 @@
-import React, { Component, type ComponentType } from 'react'
-import FallDetectionEngine, { type EndedEvent } from './fallDetectionEngine'
+import React, { Component } from 'react'
+import FallDetectionEngine from './fallDetectionEngine'
 import AdManager from '../adManager'
 import { toImperial, formatScore } from '../utils'
-import type { RouterHistory } from 'react-router-dom'
-import type { Assets, Units } from '../types'
 
 const fallDetectionEngine = new FallDetectionEngine()
 
-type Props = {
-  history: RouterHistory,
-  assets: Assets,
-  FBInstant: any,
-  adManager: AdManager,
-}
-
-type State = {
-  highestFallHeight: number,
-  throwCounter: number,
-  loadingBestScore: boolean,
-  bestScore: number,
-  bestScoreBroken: boolean,
-  prompt: string,
-  disableButtons: boolean,
-  disableButtonsTimeout: ?TimeoutID,
-}
-
-type MyComponentProps = {
-  FBInstant: any,
-  history: RouterHistory,
-  assets: Assets,
-  highestFallHeight: number,
-  bestScore: number,
-  loadingBestScore: boolean,
-  prompt: string,
-  bestScoreBroken: boolean,
-  disableButtons: boolean,
-  onReset: () => void,
-}
-
-const withFallDetection: (
-  MyComponent: ComponentType<MyComponentProps>,
-) => ComponentType<Props> = MyComponent => {
-  return class extends Component<Props, State> {
+const withFallDetection = MyComponent => {
+  return class extends Component {
     constructor() {
       super()
 
@@ -63,7 +28,6 @@ const withFallDetection: (
       const { FBInstant, adManager } = this.props
 
       this.getBestScore()
-      adManager.showAd()
 
       fallDetectionEngine
         .on('error', this.onSupportError)
@@ -82,11 +46,11 @@ const withFallDetection: (
         .stop()
     }
 
-    onSupportError: () => void = () => {
+    onSupportError = () => {
       this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
     }
 
-    onBigFallStarted: () => void = () => {
+    onBigFallStarted = () => {
       this.setState({
         disableButtons: true,
         disableButtonsTimeout: null,
@@ -95,7 +59,7 @@ const withFallDetection: (
       })
     }
 
-    onFallEnded: (event: EndedEvent) => void = event => {
+    onFallEnded = event => {
       const { highestFallHeight, bestScore } = this.state
       const { FBInstant, adManager } = this.props
       const { height, bigFall } = event
@@ -133,7 +97,7 @@ const withFallDetection: (
       })
     }
 
-    onInvalidFall: (sinceLastRecord: any) => void = sinceLastRecord => {
+    onInvalidFall = sinceLastRecord => {
       const newDisableButtonsTimeout = setTimeout(() => {
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
@@ -145,7 +109,7 @@ const withFallDetection: (
       })
     }
 
-    getBestScore: () => Promise<void> = async () => {
+    getBestScore = async () => {
       const { FBInstant } = this.props
 
       this.setState({ loadingBestScore: true })
@@ -163,7 +127,7 @@ const withFallDetection: (
       }
     }
 
-    setBestScore: number => Promise<void> = async (score: number) => {
+    setBestScore = async score => {
       const { prompt } = this.state
       const { FBInstant } = this.props
 
@@ -177,7 +141,7 @@ const withFallDetection: (
       }
     }
 
-    updateInContext: () => void = () => {
+    updateInContext = () => {
       const { bestScore } = this.state
       const { FBInstant, assets } = this.props
 
@@ -198,7 +162,7 @@ const withFallDetection: (
       }
     }
 
-    onReset: () => void = () => {
+    onReset = () => {
       const { disableButtons } = this.state
       if (!disableButtons) {
         this.setState({

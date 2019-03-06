@@ -1,11 +1,11 @@
 import EventEmitter from 'events'
 
 class FallDetectionEngine extends EventEmitter {
-  startedFallingAt: ?Date = null
-  lastRecordAt: ?Date = null
-  bigFall: boolean = false
+  startedFallingAt = null
+  lastRecordAt = null
+  bigFall = false
 
-  start: (FBInstant: any) => void = FBInstant => {
+  start = FBInstant => {
     window.addEventListener('devicemotion', this.handleDeviceMotionEvent, true)
     FBInstant.onPause(() => {
       this.emit('invalid')
@@ -21,7 +21,7 @@ class FallDetectionEngine extends EventEmitter {
     }, 1000)
   }
 
-  stop: () => void = () => {
+  stop = () => {
     window.removeEventListener(
       'devicemotion',
       this.handleDeviceMotionEvent,
@@ -29,19 +29,11 @@ class FallDetectionEngine extends EventEmitter {
     )
   }
 
-  handleDeviceMotionEvent: (event: any) => void = event => {
-    const {
-      x,
-      y,
-      z,
-    }: { x: number, y: number, z: number } = event.accelerationIncludingGravity
+  handleDeviceMotionEvent = event => {
+    const { x, y, z } = event.accelerationIncludingGravity
     const accelerationTreshold = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
 
-    const {
-      alpha,
-      beta,
-      gamma,
-    }: { alpha: number, beta: number, gamma: number } = event.rotationRate
+    const { alpha, beta, gamma } = event.rotationRate
     const alphaSquared = Math.pow(alpha, 2)
     const betaSquared = Math.pow(beta, 2)
     const gammaSquared = Math.pow(gamma, 2)
@@ -52,7 +44,7 @@ class FallDetectionEngine extends EventEmitter {
       (betaSquared + root2over2 * alphaSquared > 80000 + zAbs * 60000 ||
         gammaSquared + root2over2 * alphaSquared > 80000 + zAbs * 60000)
 
-    let sinceLastRecord: ?number = null
+    let sinceLastRecord = null
     if (this.lastRecordAt != null) {
       sinceLastRecord = new Date() - this.lastRecordAt
     }
@@ -93,11 +85,6 @@ class FallDetectionEngine extends EventEmitter {
       }
     }
   }
-}
-
-export type EndedEvent = {
-  height: number,
-  bigFall: boolean,
 }
 
 export default FallDetectionEngine

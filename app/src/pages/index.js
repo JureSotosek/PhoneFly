@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import { Redirect, type RouterHistory } from 'react-router-dom'
-import type AdManager from '../adManager'
-import type { Assets, Units } from '../types'
+import { Redirect } from 'react-router-dom'
 
 import styled from 'styled-components'
 import Leaderboard from '../containers/Leaderboard'
@@ -81,16 +79,7 @@ const InviteButton = styled(Button)`
   width: 48%;
 `
 
-type Props = {
-  history: RouterHistory,
-  assets: Assets,
-  FBInstant: any,
-  adManager: AdManager,
-}
-
-type State = { unitsLoading: boolean, units: Units }
-
-class Index extends Component<Props, State> {
+class Index extends Component {
   constructor() {
     super()
 
@@ -108,7 +97,7 @@ class Index extends Component<Props, State> {
     this.promptShortcut()
   }
 
-  getUnits: () => Promise<void> = async () => {
+  getUnits = async () => {
     const { FBInstant } = this.props
 
     this.setState({ unitsLoading: true })
@@ -125,7 +114,7 @@ class Index extends Component<Props, State> {
     }
   }
 
-  promptShortcut: () => Promise<void> = async () => {
+  promptShortcut = async () => {
     const { FBInstant } = this.props
 
     try {
@@ -143,7 +132,7 @@ class Index extends Component<Props, State> {
     }
   }
 
-  onChallengeSend: () => Promise<void> = async () => {
+  onChallengeSend = async () => {
     const { FBInstant, history } = this.props
 
     try {
@@ -163,13 +152,13 @@ class Index extends Component<Props, State> {
     }
   }
 
-  onPlay: () => void = () => {
+  onPlay = () => {
     const { history } = this.props
 
     history.push('/play')
   }
 
-  onInvite: () => Promise<void> = async () => {
+  onInvite = async () => {
     const { assets, FBInstant } = this.props
 
     try {
@@ -184,7 +173,7 @@ class Index extends Component<Props, State> {
     }
   }
 
-  onUnitsChange: () => Promise<void> = async () => {
+  onUnitsChange = async () => {
     const { FBInstant } = this.props
     const { unitsLoading, units } = this.state
 
