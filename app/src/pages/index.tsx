@@ -1,7 +1,9 @@
-import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
+import * as React from 'react'
+import { RouteComponentProps } from 'react-router-dom'
+import AdManager from '../adManager'
+import { Units } from '../types'
 
-import styled from 'styled-components'
+const styled = require('styled-components') //Type problems
 import Leaderboard from '../containers/Leaderboard'
 import Button from '../components/button'
 import UnitsSwitch from '../components/UnitsSwitch'
@@ -79,9 +81,20 @@ const InviteButton = styled(Button)`
   width: 48%;
 `
 
-class Index extends Component {
-  constructor() {
-    super()
+interface Props extends RouteComponentProps {
+  assets: any
+  FBInstant: any
+  adManager: AdManager
+}
+
+interface State {
+  unitsLoading: boolean
+  units: Units
+}
+
+class Index extends React.Component<Props, State> {
+  constructor(props) {
+    super(props)
 
     this.state = {
       unitsLoading: false,
@@ -234,7 +247,7 @@ class Index extends Component {
             </InviteButton>
             <UnitsSwitch units={units} onChange={this.onUnitsChange} />
           </ButtonsWrapper>
-          <LeaderboardTitle>Leaderboard:</LeaderboardTitle>
+          <LeaderboardTitle>{'Leaderboard:'}</LeaderboardTitle>
           <Leaderboard FBInstant={FBInstant} units={units} />
         </Wrapper>
       </>

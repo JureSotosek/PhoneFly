@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import * as React from 'react'
+const styled = require('styled-components') //Type problems
 
 const Wrapper = styled.div`
   box-sizing: border-box;

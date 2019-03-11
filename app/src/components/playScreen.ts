@@ -1,5 +1,4 @@
-import styled from 'styled-components'
-import Button from './button'
+const styled = require('styled-components') //Type problems
 
 export const Wrapper = styled.div`
   position: fixed;

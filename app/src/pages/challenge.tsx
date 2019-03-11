@@ -1,8 +1,10 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import withAcceleration from '../fallDetection/withFallDetection'
+import { RouteComponentProps } from 'react-router'
 import { toImperial, formatScore } from '../utils'
+import AdManager from '../adManager'
 
-import styled from 'styled-components'
+const styled = require('styled-components') //Type problems
 import Button from '../components/button'
 import {
   Wrapper,
@@ -25,7 +27,28 @@ const ChallangeButton = styled(Button)`
   font-size: 6vw;
 `
 
-class Challenge extends React.Component {
+interface Props extends RouteComponentProps {
+  assets: any
+  FBInstant: any
+  adManager: AdManager
+  highestFallHeight: number
+  bestScore: number
+  loadingBestScore: boolean
+  prompt: string
+  bestScoreBroken: boolean
+  disableButtons: boolean
+  onReset: () => any
+}
+
+interface State {
+  newChallange: boolean
+  heightToBeat: number
+  prompt: string
+  unitsLoading: boolean
+  units: string
+}
+
+class Challenge extends React.Component<Props, State> {
   constructor(props) {
     super(props)
 
@@ -75,7 +98,7 @@ class Challenge extends React.Component {
   }
 
   sendChallenge = async () => {
-    const { units, heightToBeat, newChallange } = this.state
+    const { heightToBeat, newChallange } = this.state
     const {
       FBInstant,
       assets,

@@ -1,7 +1,8 @@
-import React from 'react'
+import * as React from 'react'
 import { toImperial } from '../utils'
+import { Units } from '../types'
 
-import styled from 'styled-components'
+const styled = require('styled-components') //Type problems
 
 const LeaderboardWrapper = styled.div`
   padding-left: 5vw;
@@ -82,9 +83,29 @@ const Score = styled.div`
   font-size: 4.5vw;
 `
 
-class Leaderboard extends React.Component {
-  constructor() {
-    super()
+interface Props {
+  FBInstant: any
+  units: Units
+}
+
+type EntryType = {
+  rank: string
+  name: string
+  image: string
+  score: number
+  id: string
+}
+
+interface State {
+  meEntry: EntryType
+  entries: EntryType[]
+  loadingMeEntry: boolean
+  loadingEntries: boolean
+}
+
+class Leaderboard extends React.Component<Props, State> {
+  constructor(props) {
+    super(props)
 
     this.state = {
       meEntry: null,

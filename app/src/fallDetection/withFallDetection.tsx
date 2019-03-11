@@ -1,14 +1,52 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import FallDetectionEngine from './fallDetectionEngine'
+import { formatScore } from '../utils'
+import { RouteComponentProps } from 'react-router-dom'
 import AdManager from '../adManager'
-import { toImperial, formatScore } from '../utils'
+import { EntryPointData } from '../types'
 
 const fallDetectionEngine = new FallDetectionEngine()
 
-const withFallDetection = MyComponent => {
-  return class extends Component {
-    constructor() {
-      super()
+interface ComponentProps extends RouteComponentProps {
+  assets: any
+  FBInstant: any
+  adManager: AdManager
+  entryPointData?: EntryPointData
+  highestFallHeight: number
+  bestScore: number
+  loadingBestScore: boolean
+  prompt: string
+  bestScoreBroken: boolean
+  disableButtons: boolean
+  onReset: () => any
+}
+
+interface Props extends RouteComponentProps {
+  assets: any
+  FBInstant: any
+  adManager: AdManager
+  entryPointData: EntryPointData
+}
+
+interface State {
+  highestFallHeight: number
+  throwCounter: number
+  loadingBestScore: boolean
+  bestScore: number
+  bestScoreBroken: boolean
+  prompt: string
+  disableButtons: boolean
+  disableButtonsTimeout: NodeJS.Timeout
+  showAdd: boolean
+  addLoaded: boolean
+}
+
+const withFallDetection = (
+  MyComponent: React.ComponentType<ComponentProps>,
+) => {
+  return class extends React.Component<Props, State> {
+    constructor(props) {
+      super(props)
 
       this.state = {
         highestFallHeight: 0,
@@ -25,7 +63,7 @@ const withFallDetection = MyComponent => {
     }
 
     componentDidMount() {
-      const { FBInstant, adManager } = this.props
+      const { FBInstant } = this.props
 
       this.getBestScore()
 
@@ -97,7 +135,7 @@ const withFallDetection = MyComponent => {
       })
     }
 
-    onInvalidFall = sinceLastRecord => {
+    onInvalidFall = () => {
       const newDisableButtonsTimeout = setTimeout(() => {
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
@@ -127,13 +165,13 @@ const withFallDetection = MyComponent => {
       }
     }
 
-    setBestScore = async score => {
+    setBestScore = async (score: number) => {
       const { prompt } = this.state
       const { FBInstant } = this.props
 
       try {
         const leaderboard = await FBInstant.getLeaderboardAsync('score')
-        const entry = await leaderboard.setScoreAsync(parseInt(score * 100))
+        await leaderboard.setScoreAsync(Math.floor(score * 100))
         this.updateInContext()
         this.getBestScore()
       } catch (error) {
@@ -181,13 +219,9 @@ const withFallDetection = MyComponent => {
         bestScoreBroken,
         disableButtons,
       } = this.state
-      const { FBInstant, history, assets } = this.props
 
       return (
         <MyComponent
-          FBInstant={FBInstant}
-          history={history}
-          assets={assets}
           highestFallHeight={highestFallHeight}
           bestScore={bestScore}
           loadingBestScore={loadingBestScore}
@@ -195,6 +229,7 @@ const withFallDetection = MyComponent => {
           bestScoreBroken={bestScoreBroken}
           disableButtons={disableButtons}
           onReset={this.onReset}
+          {...this.props}
         />
       )
     }

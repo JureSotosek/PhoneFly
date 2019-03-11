@@ -1,7 +1,9 @@
+const adId = '746821112354806_758067227896861'
+
 class AdManager {
-  FBInstant
-  adLoaded
-  preloadedInterstitial = null
+  FBInstant: any
+  adLoaded: boolean
+  preloadedInterstitial: any = null
 
   constructor(FBInstant) {
     this.FBInstant = FBInstant
@@ -11,9 +13,7 @@ class AdManager {
 
   async loadAd() {
     try {
-      const interstitial = await this.FBInstant.getInterstitialAdAsync(
-        '746821112354806_758067227896861',
-      )
+      const interstitial = await this.FBInstant.getInterstitialAdAsync(adId)
       this.preloadedInterstitial = interstitial
       await this.preloadedInterstitial.loadAsync()
 

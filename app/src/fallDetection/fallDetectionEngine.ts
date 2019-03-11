@@ -1,9 +1,9 @@
-import EventEmitter from 'events'
+import * as EventEmitter from 'events'
 
 class FallDetectionEngine extends EventEmitter {
-  startedFallingAt = null
-  lastRecordAt = null
-  bigFall = false
+  startedFallingAt: Date = null
+  lastRecordAt: Date = null
+  bigFall: boolean = false
 
   start = FBInstant => {
     window.addEventListener('devicemotion', this.handleDeviceMotionEvent, true)
@@ -46,7 +46,7 @@ class FallDetectionEngine extends EventEmitter {
 
     let sinceLastRecord = null
     if (this.lastRecordAt != null) {
-      sinceLastRecord = new Date() - this.lastRecordAt
+      sinceLastRecord = new Date().getTime() - this.lastRecordAt.getTime()
     }
     this.lastRecordAt = new Date()
 
@@ -67,7 +67,7 @@ class FallDetectionEngine extends EventEmitter {
       this.startedFallingAt != null
     ) {
       //Fall finished
-      const fallLasted = new Date() - this.startedFallingAt
+      const fallLasted = new Date().getTime() - this.startedFallingAt.getTime()
       const height = (9.81 * ((fallLasted * 1.1) / 2000) ** 2) / 2
       const heightRounded = Math.round(height * 100) / 100
 
@@ -76,7 +76,7 @@ class FallDetectionEngine extends EventEmitter {
       this.bigFall = false
     } else if (this.startedFallingAt != null) {
       //Fall in progress but not finished
-      const fallLasted = new Date() - this.startedFallingAt
+      const fallLasted = new Date().getTime() - this.startedFallingAt.getTime()
 
       if (fallLasted > 200 && this.bigFall === false) {
         //Ignore small/accidental throws

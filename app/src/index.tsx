@@ -1,23 +1,28 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import AdManager from './adManager'
-
+import * as React from 'react'
+import { render } from 'react-dom'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
+import { EntryPointData } from './types'
 
+import AdManager from './adManager'
 import IndexPage from './pages/index'
 import PlayPage from './pages/play'
 import ChallengePage from './pages/challenge'
 
 //FB Instant
 
-const FBInstant = window.FBInstant
+interface MyWindow extends Window {
+  FBInstant: any
+  assets: any
+}
+
+const FBInstant = (window as MyWindow).FBInstant
+const assets = (window as MyWindow).assets
 const adManager = new AdManager(FBInstant)
-const assets = window.assets
 
 //React App
 
 const App = () => {
-  const entryPointData = FBInstant.getEntryPointData()
+  const entryPointData: EntryPointData = FBInstant.getEntryPointData()
   const playerId = FBInstant.player.getID()
   console.log('EntryPointData:', entryPointData)
 
@@ -45,35 +50,35 @@ const App = () => {
       <Switch>
         <Route
           path="/challenge"
-          render={({ history }) => (
+          render={props => (
             <ChallengePage
-              history={history}
               assets={assets}
               FBInstant={FBInstant}
               adManager={adManager}
               entryPointData={entryPointData}
+              {...props}
             />
           )}
         />
         <Route
           path="/play"
-          render={({ history }) => (
+          render={props => (
             <PlayPage
-              history={history}
               assets={assets}
               FBInstant={FBInstant}
               adManager={adManager}
+              {...props}
             />
           )}
         />
         <Route
           path="/"
-          render={({ history }) => (
+          render={props => (
             <IndexPage
-              history={history}
               assets={assets}
               FBInstant={FBInstant}
               adManager={adManager}
+              {...props}
             />
           )}
         />
@@ -85,7 +90,5 @@ const App = () => {
 const app = document.getElementById('app')
 
 if (app != null) {
-  ReactDOM.render(<App />, app)
+  render(<App />, app)
 }
-
-module.hot.accept()

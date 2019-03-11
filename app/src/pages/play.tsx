@@ -1,8 +1,11 @@
-import React, { Component } from 'react'
+import * as React from 'react'
 import withFallDetection from '../fallDetection/withFallDetection'
 import { toImperial, formatScore } from '../utils'
+import { RouteComponentProps } from 'react-router-dom'
+import AdManager from '../adManager'
+import { Units } from '../types'
 
-import styled from 'styled-components'
+const styled = require('styled-components') //Type problems
 import Button from '../components/button'
 import {
   Wrapper,
@@ -38,9 +41,27 @@ const ShareButton = styled(Button)`
   font-size: 6vw;
 `
 
-class Play extends Component {
-  constructor() {
-    super()
+interface Props extends RouteComponentProps {
+  assets: any
+  FBInstant: any
+  adManager: AdManager
+  highestFallHeight: number
+  bestScore: number
+  loadingBestScore: boolean
+  prompt: string
+  bestScoreBroken: boolean
+  disableButtons: boolean
+  onReset: () => any
+}
+
+interface State {
+  unitsLoading: boolean
+  units: Units
+}
+
+class Play extends React.Component<Props, State> {
+  constructor(props) {
+    super(props)
 
     this.state = {
       unitsLoading: false,
