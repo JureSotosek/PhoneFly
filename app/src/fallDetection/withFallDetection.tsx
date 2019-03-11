@@ -25,7 +25,7 @@ interface Props extends RouteComponentProps {
   assets: any
   FBInstant: any
   adManager: AdManager
-  entryPointData: EntryPointData
+  entryPointData?: EntryPointData
 }
 
 interface State {

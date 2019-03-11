@@ -11,7 +11,7 @@ class AdManager {
     this.loadAd()
   }
 
-  async loadAd() {
+  async loadAd(): Promise<void> {
     try {
       const interstitial = await this.FBInstant.getInterstitialAdAsync(adId)
       this.preloadedInterstitial = interstitial
@@ -24,7 +24,7 @@ class AdManager {
     }
   }
 
-  async showAd() {
+  async showAd(): Promise<boolean> {
     if (this.adLoaded) {
       try {
         await this.preloadedInterstitial.showAsync()

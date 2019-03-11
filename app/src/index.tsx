@@ -89,6 +89,4 @@ const App = () => {
 
 const app = document.getElementById('app')
 
-if (app != null) {
-  render(<App />, app)
-}
+render(<App />, app)
