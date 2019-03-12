@@ -1,32 +1,29 @@
 module.exports = {
-  entry: ['@babel/polyfill', './src/index.tsx'],
+  entry: ['./src/index.tsx'],
   module: {
     rules: [
       {
-        test: /\.(tsx?|jsx?)$/,
-        use: 'ts-loader',
+        test: /\.(jsx?|tsx?)$/,
         exclude: /node_modules/,
+        use: ['babel-loader'],
       },
       {
-        test: /\.(png|jp(e*)g|svg)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              limit: 8000,
-              name: 'images/[hash]-[name].[ext]',
-            },
-          },
-        ],
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto',
       },
     ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['*', '.mjs', '.js', '.jsx', '.ts', '.tsx', '.d.ts'],
   },
   output: {
     path: __dirname + '/dist',
     publicPath: '/',
     filename: 'bundle.js',
+  },
+  node: {
+    fs: 'empty',
+    module: 'empty',
   },
 }

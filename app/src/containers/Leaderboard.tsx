@@ -2,7 +2,7 @@ import * as React from 'react'
 import { toImperial } from '../utils'
 import { Units } from '../types'
 
-const styled = require('styled-components') //Type problems
+import styled from 'styled-components'
 
 const LeaderboardWrapper = styled.div`
   padding-left: 5vw;

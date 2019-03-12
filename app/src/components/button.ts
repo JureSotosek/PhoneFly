@@ -1,4 +1,4 @@
-const styled = require('styled-components') //Type problems
+import styled from 'styled-components'
 
 const Button = styled.div`
   width: 45%;

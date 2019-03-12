@@ -36,7 +36,7 @@ interface State {
   bestScoreBroken: boolean
   prompt: string
   disableButtons: boolean
-  disableButtonsTimeout: NodeJS.Timeout
+  disableButtonsTimeout: any //Type problems
   showAdd: boolean
   addLoaded: boolean
 }

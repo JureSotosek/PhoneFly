@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router'
 import { toImperial, formatScore } from '../utils'
 import AdManager from '../adManager'
 
-const styled = require('styled-components') //Type problems
+import styled from 'styled-components'
 import Button from '../components/button'
 import {
   Wrapper,

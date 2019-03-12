@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom'
 import AdManager from '../adManager'
 import { Units } from '../types'
 
-const styled = require('styled-components') //Type problems
+import styled from 'styled-components'
 import Leaderboard from '../containers/Leaderboard'
 import Button from '../components/button'
 import UnitsSwitch from '../components/UnitsSwitch'
