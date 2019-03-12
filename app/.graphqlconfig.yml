@@ -1,0 +1,11 @@
+projects:
+  server:
+    schemaPath: src/client/schema.graphql
+    extensions:
+      endpoints:
+        default: https://phonefly-api.now.sh
+      codegen:
+        - generator: graphql-binding
+          language: typescript
+          output:
+            binding: src/client/binding.ts

@@ -1,5 +1,5 @@
-# source: https://phonefly-api.now.sh/
-# timestamp: Mon Mar 11 2019 19:45:48 GMT+0100 (Central European Standard Time)
+# source: https://phonefly-api.now.sh
+# timestamp: Tue Mar 12 2019 18:01:20 GMT+0100 (Central European Standard Time)
 
 type Challenge {
   id: ID!
@@ -10,8 +10,17 @@ type Challenge {
 }
 
 type Mutation {
-  sendChallenge(senderId: String!, receiverId: String!, score: Float!, signature: String!): Challenge!
-  answerChallenge(challengeId: String!, score: Float!, signature: String!): Challenge!
+  sendChallenge(
+    senderId: String!
+    receiverId: String!
+    score: Float!
+    signature: String!
+  ): Challenge!
+  answerChallenge(
+    challengeId: String!
+    score: Float!
+    signature: String!
+  ): Challenge!
 }
 
 type Player {
