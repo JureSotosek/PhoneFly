@@ -1,21 +1,16 @@
 {
-  "name": "server",
+  "name": "phonefly-api",
   "scripts": {
-    "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
-    "dev": "npm-run-all --parallel start playground",
-    "debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect src/index.ts",
-    "playground": "graphql playground",
+    "start": "node dist/index.js",
+    "dev": "dotenv -- nodemon -e ts,graphql -x ts-node dist/index.js",
     "build": "rimraf dist && tsc"
   },
   "dependencies": {
-    "bcryptjs": "2.4.3",
     "crypto-js": "^3.1.9-1",
     "graphql-yoga": "1.17.4",
-    "jsonwebtoken": "8.4.0",
     "prisma-binding": "2.3.2"
   },
   "devDependencies": {
-    "@types/bcryptjs": "2.4.2",
     "dotenv-cli": "1.4.0",
     "graphql-cli": "3.0.10",
     "graphqlgen": "^0.6.0-rc8",
