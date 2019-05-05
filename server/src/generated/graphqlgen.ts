@@ -7,7 +7,6 @@ export namespace QueryResolvers {
   export const defaultResolvers = {}
 
   export interface ArgsPendingChallenges {
-    playerId: string
     signature: string
   }
 
@@ -413,7 +412,6 @@ export namespace MutationResolvers {
   export const defaultResolvers = {}
 
   export interface ArgsSendChallenge {
-    senderId: string
     receiverId: string
     score: number
     signature: string

@@ -1,9 +1,9 @@
 import { QueryResolvers } from '../generated/graphqlgen'
-import checkSignature from '../checkSignature'
+import verifySignature from '../verifySignature'
 
 export const Query: QueryResolvers.Type = {
-  pendingChallenges: (parent, { playerId, signature }, ctx) => {
-    checkSignature(signature)
+  pendingChallenges: (_, { signature }, ctx) => {
+    const { player_id: playerId } = verifySignature(signature)
 
     return ctx.prisma.query.challenges({
       where: { challengeReceiver: { FacebookID: playerId }, answered: false },

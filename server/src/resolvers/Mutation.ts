@@ -1,13 +1,9 @@
 import { MutationResolvers } from '../generated/graphqlgen'
-import checkSignature from '../checkSignature'
+import verifySignature from '../verifySignature'
 
 export const Mutation: MutationResolvers.Type = {
-  sendChallenge: async (
-    parent,
-    { senderId, receiverId, score, signature },
-    ctx,
-  ) => {
-    checkSignature(signature)
+  sendChallenge: async (_, { receiverId, score, signature }, ctx) => {
+    const { player_id: senderId } = verifySignature(signature)
 
     await ctx.prisma.mutation.upsertPlayer({
       where: { FacebookID: senderId },
@@ -30,8 +26,8 @@ export const Mutation: MutationResolvers.Type = {
       },
     })
   },
-  answerChallenge: async (parent, { challengeId, score, signature }, ctx) => {
-    checkSignature(signature)
+  answerChallenge: async (_, { challengeId, score, signature }, ctx) => {
+    verifySignature(signature)
 
     const {
       challengeSender: {

@@ -1,10 +1,18 @@
 type Query {
-  pendingChallenges(playerId: String! signature: String!): [Challenge!]!
+  pendingChallenges(signature: String!): [Challenge!]!
 }
 
 type Mutation {
-  sendChallenge(senderId: String! receiverId: String! score: Float! signature: String!): Challenge!
-  answerChallenge(challengeId: String! score: Float! signature: String!): Challenge!
+  sendChallenge(
+    receiverId: String!
+    score: Float!
+    signature: String!
+  ): Challenge!
+  answerChallenge(
+    challengeId: String!
+    score: Float!
+    signature: String!
+  ): Challenge!
 }
 
 type Challenge {
