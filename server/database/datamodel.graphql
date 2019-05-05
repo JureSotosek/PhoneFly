@@ -5,8 +5,10 @@ type Player {
 
   FacebookID: String! @unique
   highScore: Float
-  sentChallenges: [Challenge!]! @relation(name: "SentChallenges", onDelete: CASCADE)
-  pendingChallenges: [Challenge!]! @relation(name: "PendingChallenges", onDelete: SET_NULL)
+  sentChallenges: [Challenge!]!
+    @relation(name: "SentChallenges", onDelete: CASCADE)
+  pendingChallenges: [Challenge!]!
+    @relation(name: "PendingChallenges", onDelete: SET_NULL)
 }
 
 type Challenge {
@@ -16,6 +18,7 @@ type Challenge {
 
   score: Int!
   challengeSender: Player! @relation(name: "SentChallenges", onDelete: CASCADE)
-  challengeReceiver: Player! @relation(name: "PendingChallenges", onDelete: CASCADE)
+  challengeReceiver: Player!
+    @relation(name: "PendingChallenges", onDelete: CASCADE)
   answered: Boolean!
 }
