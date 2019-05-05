@@ -26,7 +26,7 @@ const checkSignature: (
     ).toString(CryptoJS.enc.Utf8)
 
     if (isValid) {
-      return json
+      return JSON.parse(json)
     } else {
       throw new Error('Signature error')
     }

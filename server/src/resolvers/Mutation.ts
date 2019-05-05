@@ -2,7 +2,7 @@ import { MutationResolvers } from '../generated/graphqlgen'
 import verifySignature from '../verifySignature'
 
 export const Mutation: MutationResolvers.Type = {
-  sendChallenge: async (_, { receiverId, score, signature }, ctx) => {
+  sendChallenge: async (_, { receiverId, score, signature }, ctx, info) => {
     const { player_id: senderId } = verifySignature(signature)
 
     await ctx.prisma.mutation.upsertPlayer({
@@ -17,25 +17,24 @@ export const Mutation: MutationResolvers.Type = {
       update: { FacebookID: receiverId },
     })
 
-    return ctx.prisma.mutation.createChallenge({
-      data: {
-        challengeSender: { connect: { FacebookID: receiverId } },
-        challengeReceiver: { connect: { FacebookID: receiverId } },
-        score,
-        answered: false,
+    return ctx.prisma.mutation.createChallenge(
+      {
+        data: {
+          challengeSender: { connect: { FacebookID: senderId } },
+          challengeReceiver: { connect: { FacebookID: receiverId } },
+          score,
+          answered: false,
+        },
       },
-    })
+      info,
+    )
   },
-  answerChallenge: async (_, { challengeId, score, signature }, ctx) => {
+  answerChallenge: async (_, { challengeId, score, signature }, ctx, info) => {
     verifySignature(signature)
 
     const {
-      challengeSender: {
-        id: { senderId },
-      },
-      challengeReceiver: {
-        id: { receiverId },
-      },
+      challengeSender: { id: senderId },
+      challengeReceiver: { id: receiverId },
     } = await ctx.prisma.mutation.updateChallenge(
       {
         where: { id: challengeId },
@@ -50,13 +49,16 @@ export const Mutation: MutationResolvers.Type = {
        }`,
     )
 
-    return ctx.prisma.mutation.createChallenge({
-      data: {
-        challengeSender: { connect: { id: senderId } },
-        challengeReceiver: { connect: { id: receiverId } },
-        score,
-        answered: false,
+    return ctx.prisma.mutation.createChallenge(
+      {
+        data: {
+          challengeSender: { connect: { id: senderId } },
+          challengeReceiver: { connect: { id: receiverId } },
+          score,
+          answered: false,
+        },
       },
-    })
+      info,
+    )
   },
 }

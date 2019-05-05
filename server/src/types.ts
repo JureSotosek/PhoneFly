@@ -1,16 +1,18 @@
-import { Prisma } from "./generated/prisma";
+import { Prisma } from './generated/prisma'
 
 export interface Context {
-  prisma: Prisma;
-  request: any;
+  prisma: Prisma
+  request: any
 }
+
 export interface Challenge {
-  id: string;
-  score: number;
-  answered: boolean;
+  id: string
+  score: number
+  answered: boolean
 }
+
 export interface Player {
-  id: string;
-  FacebookID: string;
-  highScore: number | null;
+  id: string
+  FacebookID: string
+  highScore: number | null
 }
