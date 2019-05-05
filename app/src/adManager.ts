@@ -20,7 +20,9 @@ class AdManager {
       this.adLoaded = true
     } catch (error) {
       console.log(error)
-      this.loadAd()
+      if (error.code !== 'CLIENT_UNSUPPORTED_OPERATION') {
+        this.loadAd()
+      }
     }
   }
 

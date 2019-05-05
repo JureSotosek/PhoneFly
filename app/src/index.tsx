@@ -3,7 +3,6 @@ import { render } from 'react-dom'
 import { MemoryRouter, Route, Switch } from 'react-router-dom'
 import { EntryPointData } from './types'
 
-import Client from './client'
 import AdManager from './adManager'
 import IndexPage from './pages/index'
 import PlayPage from './pages/play'
@@ -20,12 +19,6 @@ const FBInstant = (window as MyWindow).FBInstant
 const assets = (window as MyWindow).assets
 const adManager = new AdManager(FBInstant)
 
-const client = new Client()
-
-client.query
-  .pendingChallenges({ playerId: '', signature: '' })
-  .then(console.log)
-  .catch(console.log)
 //React App
 
 const App = () => {
