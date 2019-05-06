@@ -1,6 +1,9 @@
 {
   "name": "phonefly-api",
-  "author": "Jure Sotosek <juresotosek@gmail.com>",
+  "author": {
+    "name": "Jure Sotosek",
+    "url": "https://www.github.com/juresotosek"
+  },
   "scripts": {
     "start": "node dist/index.js",
     "dev": "dotenv -- ts-node-dev src/index.ts",

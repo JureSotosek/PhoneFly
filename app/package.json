@@ -1,18 +1,19 @@
 {
   "name": "phone-fly",
-  "description": "How high can you throw your phone?",
+  "description": "A phone throwing game",
   "author": {
     "name": "Jure Sotosek",
     "url": "https://www.github.com/juresotosek"
   },
-  "keywords": [],
-  "license": "MIT",
   "scripts": {
     "dev": "yarn build && http-server ./dist --ssl -c-1 -p 8080 -a localhost",
+    "dev:open": "open https://www.facebook.com/embed/instantgames/746821112354806/player?game_url=https%3A%2F%2Flocalhost%3A8080 && yarn dev",
     "build": "webpack --config ./webpack.config.js --mode production",
-    "generate-client": "graphql get-schema && graphql codegen"
+    "gqlcodegen": "gql-gen --config gqlcodegen.yml"
   },
   "dependencies": {
+    "graphql": "^14.2.1",
+    "graphql-tag": "^2.10.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-router-dom": "^4.3.1",
@@ -29,9 +30,10 @@
     "@types/react-dom": "^16.8.2",
     "@types/react-router-dom": "^4.3.1",
     "babel-loader": "^8.0.5",
-    "graphql": "^14.1.1",
-    "graphql-binding": "^2.5.1",
-    "graphql-cli": "^3.0.11",
+    "graphql-code-generator": "^0.18.1",
+    "graphql-codegen-typescript-client": "^0.18.1",
+    "graphql-codegen-typescript-common": "^0.18.1",
+    "graphql-codegen-typescript-server": "^0.18.1",
     "http-server": "^0.11.1",
     "typescript": "^3.1.6",
     "webpack": "^4.29.0",
