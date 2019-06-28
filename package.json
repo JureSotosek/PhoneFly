@@ -5,5 +5,12 @@
     "app",
     "graphql",
     "webhook"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^12.0.10",
+    "prettier": "^1.18.2",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.2"
+  }
 }
