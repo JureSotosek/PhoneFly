@@ -17,9 +17,10 @@
     "build": "npm run build:react && npm run build:bundle",
     "build:react": "react-scripts build",
     "build:bundle": "webpack --config webpack.config.js --mode 'production'",
-    "test": "react-scripts test",
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --fix --format verbose --project tsconfig.json",
-    "fmt": "prettier --write"
+    "fmt": "prettier './**/*.{js,jsx,ts,tsx,css,scss,md,json,yml}'",
+    "fmt:check": "prettier --check './**/*.{js,jsx,ts,tsx,css,scss,md,json,yml}'",
+    "pre-commit": "yarn lint && yarn fmt:check"
   },
   "browserslist": {
     "production": [
