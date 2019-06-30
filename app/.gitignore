@@ -11,6 +11,7 @@
 # production
 /build
 /public/bundle.js
+public.zip
 
 # misc
 .DS_Store
