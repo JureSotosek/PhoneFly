@@ -18,7 +18,8 @@
     "build:react": "react-scripts build",
     "build:bundle": "webpack --config webpack.config.js --mode 'production'",
     "test": "react-scripts test",
-    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --fix --format verbose --project tsconfig.json"
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --fix --format verbose --project tsconfig.json",
+    "fmt": "prettier --write"
   },
   "browserslist": {
     "production": [
