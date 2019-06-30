@@ -2,9 +2,7 @@
   "name": "phonefly-monorepo",
   "private": true,
   "workspaces": [
-    "app",
-    "graphql",
-    "webhook"
+    "packages/*"
   ],
   "devDependencies": {
     "@types/node": "^12.0.10",
