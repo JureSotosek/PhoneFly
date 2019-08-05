@@ -14,7 +14,8 @@
     "webpack-cli": "^3.3.5"
   },
   "scripts": {
-    "dev": "yarn build && http-server --ssl -c-1 -p 3000 -a localhost",
+    "dev": "yarn build && yarn dev:serve",
+    "dev:serve": "http-server --ssl -C './certificates/cert.pem' -K './certificates/key.pem' -c-1 -p 3000 -a localhost",
     "dev:open": "open https://www.facebook.com/embed/instantgames/746821112354806/player?game_url=https://localhost:3000",
     "build": "npm run build:react && npm run build:bundle",
     "build:react": "react-scripts build",
