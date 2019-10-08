@@ -10,6 +10,13 @@ You also need to be logged in as a tester for the game to work.
 
 1. To start the dev server run the dev command: `yarn dev`
 
-2. Visit `https://localhost:3000`, to confirm that you want to proceed with the certificates you have, since they are not signed by anyone.
+The command will run three seperate commands:
+``` bash
+yarn build // Builds and bundles the app in ./public
 
-3. Run the open command `dev:open` or open `https://www.facebook.com/embed/instantgames/746821112354806/player?game_url=https://localhost:3000`.
+yarn dev:serve // Starts up an http-server serving ./public
+
+yarn dev:open // Open the facebook url where you can test the app
+```
+
+NOTE: If you are running the `yarn dev` command for the first time, after you have run `yarn dev`, you need to visit `https://localhost:3000` and verifi the ssl ceritificates. In Chrome for example you need to press proceed. After that, return to the url from the `yarn dev:open` command and refresh.
