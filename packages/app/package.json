@@ -15,16 +15,16 @@
     "webpack-cli": "^3.3.5"
   },
   "scripts": {
-    "dev": "npm-run-all yarn build && yarn dev:serve",
-    "dev:serve": "yarn build && http-server --ssl -C './certificates/cert.pem' -K './certificates/key.pem' -c-1 -p 3000 -a localhost",
+    "dev": "npm-run-all build --parallel dev:serve dev:open",
+    "dev:serve": "http-server --ssl -C './certificates/cert.pem' -K './certificates/key.pem' -c-1 -p 3000 -a localhost",
     "dev:open": "open https://www.facebook.com/embed/instantgames/746821112354806/player?game_url=https://localhost:3000",
-    "build": "npm run build:react && npm run build:bundle",
+    "build": "npm-run-all build:react build:bundle",
     "build:react": "react-scripts build",
     "build:bundle": "webpack --config webpack.config.js --mode 'production'",
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --fix --format verbose --project tsconfig.json",
     "fmt": "prettier './**/*.{js,jsx,ts,tsx,css,scss,md,json,yml}'",
     "fmt:check": "prettier --check './src/**/*.{js,jsx,ts,tsx,css,scss,md,json,yml}'",
-    "pre-commit": "yarn lint && yarn fmt:check"
+    "pre-commit": "npm-run-all lint fmt:check"
   },
   "browserslist": {
     "production": [
