@@ -1,5 +1,5 @@
 export interface IAssets {
-  [src: string]: string | undefined
+  [src: string]: string
 }
 
 // Relative to the index.html file in /public
