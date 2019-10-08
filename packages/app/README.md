@@ -12,11 +12,11 @@ You also need to be logged in as a tester for the game to work.
 
 The command will run three seperate commands:
 ``` bash
-yarn build // Builds and bundles the app in ./public
+yarn build #Builds and bundles the app in ./public
 
-yarn dev:serve // Starts up an http-server serving ./public
+yarn dev:serve #Starts up an http-server serving ./public
 
-yarn dev:open // Open the facebook url where you can test the app
+yarn dev:open #Open the facebook url where you can test the app
 ```
 
 NOTE: If you are running the `yarn dev` command for the first time, after you have run `yarn dev`, you need to visit `https://localhost:3000` and verifi the ssl ceritificates. In Chrome for example you need to press proceed. After that, return to the url from the `yarn dev:open` command and refresh.
