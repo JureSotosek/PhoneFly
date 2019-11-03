@@ -8,10 +8,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+          
     steps:
       - uses: actions/checkout@v1
-      - name: Build App
+      - name: Install Dependencies
         run: |
           cd packages/app
-          yarn build
+          yarn
+      - name: Build App
+        run: yarn build
