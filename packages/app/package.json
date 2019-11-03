@@ -1,7 +1,6 @@
 {
   "name": "phonefly-app",
   "version": "0.1.0",
-  "homepage": "https://github.com/juresotosek/phonefly",
   "license": "MIT",
   "dependencies": {
     "@types/jest": "24.0.15",
