@@ -3,7 +3,7 @@ name: Deploy App To Facebook
 on:
   push:
     branches:
-      - master
+      - '2.0'
 
 jobs:
   build:
