@@ -12,7 +12,7 @@
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --fix --format verbose --project tsconfig.json",
     "pre-commit": "npm-run-all lint fmt:check",
     "upload": "npm-run-all upload:zip",
-    "upload:zip": "zip -r public.zip public"
+    "upload:zip": "zip -r public.zip build"
   },
   "browserslist": {
     "production": [
