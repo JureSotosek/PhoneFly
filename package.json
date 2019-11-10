@@ -1,6 +1,6 @@
 {
-  "name": "phonefly-app",
-  "version": "0.1.0",
+  "name": "phonefly",
+  "version": "1.5.0",
   "license": "MIT",
   "scripts": {
     "build": "npm-run-all build:react build:bundle",
