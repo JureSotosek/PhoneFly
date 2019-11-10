@@ -8,14 +8,14 @@ You also need to be logged in as a tester for the game to work.
 
 ## Development
 
-1. To start the dev server run the dev command: `yarn dev`
+To start the dev server run the dev command: `yarn dev`
 
 The command will run three seperate commands:
 
 ```bash
-yarn build # Builds and bundles the app in ./public
+yarn build # Builds the app into ./build
 
-yarn dev:serve # Starts up an http-server serving ./public
+yarn dev:serve # Starts up an http-server serving ./build
 
 yarn dev:open # Open the facebook url where you can test the app
 ```
