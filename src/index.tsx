@@ -1,4 +1,3 @@
-import AdManager from 'adManager'
 import App from 'App'
 import loadAssets from 'loadAssets'
 import React from 'react'
@@ -26,12 +25,9 @@ async function main() {
   // Start the game
   await FBInstant.startGameAsync()
 
-  // Init AdManager
-  const adManager = new AdManager(FBInstant)
-
   // Render the React app
   ReactDOM.render(
-    <App assets={assets} FBInstant={FBInstant} adManager={adManager} />,
+    <App assets={assets} FBInstant={FBInstant} />,
     document.getElementById('root')
   )
 }

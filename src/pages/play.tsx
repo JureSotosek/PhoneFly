@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import AdManager from '../adManager'
 import withFallDetection from '../fallDetection/withFallDetection'
 import { IAssets, IFBInstant, Units } from '../types'
 import { formatScore, toImperial } from '../utils'
@@ -44,7 +43,6 @@ const ShareButton = styled(Button)`
 interface IProps extends RouteComponentProps {
   assets: IAssets
   FBInstant: IFBInstant
-  adManager: AdManager
   highestFallHeight: number
   bestScore: number
   loadingBestScore: boolean

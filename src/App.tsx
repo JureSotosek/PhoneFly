@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom'
 import { IAssets, IEntryPointData, IFBInstant } from './types'
 
-import AdManager from 'adManager'
 import ChallengePage from './pages/challenge'
 import IndexPage from './pages/index'
 import PlayPage from './pages/play'
@@ -15,10 +14,9 @@ import PlayPage from './pages/play'
 interface IProps {
   assets: IAssets
   FBInstant: IFBInstant
-  adManager: AdManager
 }
 
-export default function App({ assets, FBInstant, adManager }: IProps) {
+export default function App({ assets, FBInstant }: IProps) {
   const entryPointData = FBInstant.getEntryPointData() as IEntryPointData
   const playerId = FBInstant.player.getID()
 
@@ -44,7 +42,6 @@ export default function App({ assets, FBInstant, adManager }: IProps) {
       <ChallengePage
         assets={assets}
         FBInstant={FBInstant}
-        adManager={adManager}
         entryPointData={entryPointData}
         {...props}
       />
@@ -52,25 +49,11 @@ export default function App({ assets, FBInstant, adManager }: IProps) {
   }
 
   function renderPlay(props: RouteComponentProps) {
-    return (
-      <PlayPage
-        assets={assets}
-        FBInstant={FBInstant}
-        adManager={adManager}
-        {...props}
-      />
-    )
+    return <PlayPage assets={assets} FBInstant={FBInstant} {...props} />
   }
 
   function renderIndex(props: RouteComponentProps) {
-    return (
-      <IndexPage
-        assets={assets}
-        FBInstant={FBInstant}
-        adManager={adManager}
-        {...props}
-      />
-    )
+    return <IndexPage assets={assets} FBInstant={FBInstant} {...props} />
   }
 
   return (

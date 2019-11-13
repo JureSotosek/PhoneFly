@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import AdManager from '../adManager'
 import { IAssets, IFBInstant, Units } from '../types'
 
 import styled from 'styled-components'
@@ -84,7 +83,6 @@ const InviteButton = styled(Button)`
 interface IProps extends RouteComponentProps {
   assets: IAssets
   FBInstant: IFBInstant
-  adManager: AdManager
 }
 
 interface IState {
@@ -103,9 +101,6 @@ class Index extends React.Component<IProps, IState> {
   }
 
   public componentDidMount() {
-    const { adManager } = this.props
-
-    adManager.showAd()
     this.getUnits()
     this.promptShortcut()
   }

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router'
 import { IAssets, IFBInstant } from 'types'
-import AdManager from '../adManager'
 import withAcceleration from '../fallDetection/withFallDetection'
 import { formatScore, toImperial } from '../utils'
 
@@ -35,7 +34,6 @@ const ChallangeButton = styled(Button)`
 interface IProps extends RouteComponentProps {
   assets: IAssets
   FBInstant: IFBInstant
-  adManager: AdManager
   highestFallHeight: number
   bestScore: number
   loadingBestScore: boolean

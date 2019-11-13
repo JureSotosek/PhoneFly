@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import AdManager from '../adManager'
 import { IAssets, IEntryPointData, IFBInstant } from '../types'
 import { formatScore } from '../utils'
 import FallDetectionEngine from './fallDetectionEngine'
@@ -10,7 +9,6 @@ const fallDetectionEngine = new FallDetectionEngine()
 interface IComponentProps extends RouteComponentProps {
   assets: IAssets
   FBInstant: IFBInstant
-  adManager: AdManager
   entryPointData?: IEntryPointData
   highestFallHeight: number
   bestScore: number
@@ -24,7 +22,6 @@ interface IComponentProps extends RouteComponentProps {
 interface IProps extends RouteComponentProps {
   assets: IAssets
   FBInstant: IFBInstant
-  adManager: AdManager
   entryPointData?: IEntryPointData
 }
 
@@ -99,7 +96,7 @@ const withFallDetection = (
 
     public onFallEnded = (event: any) => {
       const { highestFallHeight, bestScore } = this.state
-      const { FBInstant, adManager } = this.props
+      const { FBInstant } = this.props
       const { height, bigFall } = event
 
       FBInstant.logEvent('throw', height, {
@@ -124,9 +121,6 @@ const withFallDetection = (
       const newDisableButtonsTimeout = setTimeout(() => {
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
-          if (bigFall) {
-            adManager.showAd()
-          }
         }
       }, 750)
 
