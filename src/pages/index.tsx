@@ -127,7 +127,7 @@ class Index extends React.Component<IProps, IState> {
     }
   }
 
-  public async promptShortcut() {
+  public promptShortcut = async () => {
     const { FBInstant } = this.props
 
     try {
@@ -145,7 +145,7 @@ class Index extends React.Component<IProps, IState> {
     }
   }
 
-  public async onChallengeSend() {
+  public onChallengeSend = async () => {
     const { FBInstant, history } = this.props
 
     try {
@@ -165,13 +165,13 @@ class Index extends React.Component<IProps, IState> {
     }
   }
 
-  public async onPlay() {
+  public onPlay = () => {
     const { history } = this.props
 
     history.push('/play')
   }
 
-  public async onInvite() {
+  public onInvite = async () => {
     const { assets, FBInstant } = this.props
 
     try {
@@ -186,7 +186,7 @@ class Index extends React.Component<IProps, IState> {
     }
   }
 
-  public async onUnitsChange() {
+  public onUnitsChange = async () => {
     const { FBInstant } = this.props
     const { unitsLoading, units } = this.state
 

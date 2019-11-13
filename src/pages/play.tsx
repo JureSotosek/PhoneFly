@@ -73,7 +73,7 @@ class Play extends React.Component<IProps, IState> {
     this.getUnits()
   }
 
-  public async getUnits() {
+  public getUnits = async () => {
     const { FBInstant } = this.props
 
     this.setState({ unitsLoading: true })
@@ -90,7 +90,7 @@ class Play extends React.Component<IProps, IState> {
     }
   }
 
-  public share() {
+  public share = () => {
     const { FBInstant, assets, bestScore, disableButtons } = this.props
 
     if (!disableButtons) {

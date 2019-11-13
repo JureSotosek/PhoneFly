@@ -125,7 +125,7 @@ class Leaderboard extends React.Component<IProps, IState> {
     this.getEntries()
   }
 
-  public async getEntries() {
+  public getEntries = async () => {
     const { meEntry } = this.state
     const { FBInstant } = this.props
 
@@ -165,7 +165,7 @@ class Leaderboard extends React.Component<IProps, IState> {
     }
   }
 
-  public async getMeEntry() {
+  public getMeEntry = async () => {
     const { FBInstant } = this.props
 
     this.setState({ loadingMeEntry: true })
@@ -195,7 +195,7 @@ class Leaderboard extends React.Component<IProps, IState> {
     }
   }
 
-  public renderEntries() {
+  public renderEntries = () => {
     const { entries, loadingEntries, meEntry } = this.state
     const { units } = this.props
 
@@ -232,7 +232,7 @@ class Leaderboard extends React.Component<IProps, IState> {
     }
   }
 
-  public renderMeEntry() {
+  public renderMeEntry = () => {
     const { meEntry, loadingMeEntry } = this.state
     const { units } = this.props
 
