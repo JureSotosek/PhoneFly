@@ -1,13 +1,16 @@
-export interface IAssets {
-  [src: string]: string
-}
+import { IAssets } from 'types'
 
 // Relative to the index.html file in /public
 const ASSETS_FOLDER = 'assets'
 
 // Include all of the assets you want to be accsible
 // trough the assets prop in the React app
-const ASSETS_TO_DOWNLOAD = ['test.png']
+const ASSETS_TO_DOWNLOAD = [
+  'ChallengeImage',
+  'HighScoreImage',
+  'IndexBanner',
+  'PlayBanner',
+]
 
 async function loadAsset(image: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -35,7 +38,7 @@ export default async function loadAssets(): Promise<IAssets> {
   const assets: IAssets = {}
 
   ASSETS_TO_DOWNLOAD.forEach(async (asset, index) => {
-    assets[asset] = await loadAsset(asset)
+    assets[asset] = await loadAsset(asset + '.png')
 
     const numberOfAssets = ASSETS_TO_DOWNLOAD.length
     const progress = ((Number(index) + 1) / (numberOfAssets + 1)) * 100

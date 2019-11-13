@@ -1,16 +1,14 @@
+import AdManager from 'adManager'
 import App from 'App'
 import loadAssets from 'loadAssets'
 import React from 'react'
 import ReactDOM from 'react-dom'
-
-interface IFBinstant {
-  [property: string]: any
-}
+import { IFBInstant } from 'types'
 
 declare global {
   // tslint:disable-next-line: interface-name
   interface Window {
-    FBInstant: IFBinstant
+    FBInstant: IFBInstant
   }
 }
 
@@ -28,9 +26,12 @@ async function main() {
   // Start the game
   await FBInstant.startGameAsync()
 
+  // Init AdManager
+  const adManager = new AdManager(FBInstant)
+
   // Render the React app
   ReactDOM.render(
-    <App assets={assets} FBInstant={FBInstant} />,
+    <App assets={assets} FBInstant={FBInstant} adManager={adManager} />,
     document.getElementById('root')
   )
 }
