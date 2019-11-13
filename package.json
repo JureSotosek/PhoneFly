@@ -2,6 +2,7 @@
   "name": "phonefly",
   "version": "1.5.0",
   "license": "MIT",
+  "homepage": "./",
   "scripts": {
     "build": "node scripts/build.js",
     "dev": "npm-run-all build --parallel dev:serve dev:open",
@@ -11,7 +12,7 @@
     "fmt:check": "prettier --check './src/**/*.{js,jsx,ts,tsx,css,scss,md,json,yml}'",
     "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --fix --format verbose --project tsconfig.json",
     "pre-commit": "npm-run-all lint fmt:check",
-    "upload": "npm-run-all upload:zip",
+    "upload": "npm-run-all build upload:zip",
     "upload:zip": "zip -r build.zip build"
   },
   "browserslist": {

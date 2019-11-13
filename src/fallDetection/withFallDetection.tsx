@@ -166,7 +166,6 @@ const withFallDetection = (
     }
 
     public async setBestScore(score: number) {
-      const { prompt } = this.state
       const { FBInstant } = this.props
 
       try {
