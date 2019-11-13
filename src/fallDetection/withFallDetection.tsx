@@ -84,11 +84,11 @@ const withFallDetection = (
         .stop()
     }
 
-    public onSupportError() {
+    public onSupportError = () => {
       this.setState({ prompt: "❗️Can't play PhonePly on this device❗️" })
     }
 
-    public onBigFallStarted() {
+    public onBigFallStarted = () => {
       this.setState({
         disableButtons: true,
         disableButtonsTimeout: null,
@@ -97,7 +97,7 @@ const withFallDetection = (
       })
     }
 
-    public onFallEnded(event: any) {
+    public onFallEnded = (event: any) => {
       const { highestFallHeight, bestScore } = this.state
       const { FBInstant, adManager } = this.props
       const { height, bigFall } = event
@@ -135,7 +135,7 @@ const withFallDetection = (
       })
     }
 
-    public onInvalidFall() {
+    public onInvalidFall = () => {
       const newDisableButtonsTimeout = setTimeout(() => {
         if (newDisableButtonsTimeout === this.state.disableButtonsTimeout) {
           this.setState({ disableButtons: false })
@@ -147,7 +147,7 @@ const withFallDetection = (
       })
     }
 
-    public async getBestScore() {
+    public getBestScore = async () => {
       const { FBInstant } = this.props
 
       this.setState({ loadingBestScore: true })
@@ -165,7 +165,7 @@ const withFallDetection = (
       }
     }
 
-    public async setBestScore(score: number) {
+    public setBestScore = async (score: number) => {
       const { FBInstant } = this.props
 
       try {
@@ -178,7 +178,7 @@ const withFallDetection = (
       }
     }
 
-    public updateInContext() {
+    public updateInContext = () => {
       const { bestScore } = this.state
       const { FBInstant, assets } = this.props
 
@@ -199,7 +199,7 @@ const withFallDetection = (
       }
     }
 
-    public onReset() {
+    public onReset = () => {
       const { disableButtons } = this.state
       if (!disableButtons) {
         this.setState({

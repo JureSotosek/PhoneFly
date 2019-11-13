@@ -6,7 +6,7 @@ class FallDetectionEngine extends EventEmitter {
   public lastRecordAt: Date | null = null
   public bigFall: boolean = false
 
-  public start(FBInstant: IFBInstant) {
+  public start = (FBInstant: IFBInstant) => {
     window.addEventListener('devicemotion', this.handleDeviceMotionEvent, true)
     FBInstant.onPause(() => {
       this.emit('invalid')
@@ -22,7 +22,7 @@ class FallDetectionEngine extends EventEmitter {
     }, 1000)
   }
 
-  public stop() {
+  public stop = () => {
     window.removeEventListener(
       'devicemotion',
       this.handleDeviceMotionEvent,
@@ -30,7 +30,7 @@ class FallDetectionEngine extends EventEmitter {
     )
   }
 
-  public handleDeviceMotionEvent(event: any) {
+  public handleDeviceMotionEvent = (event: any) => {
     const { x, y, z } = event.accelerationIncludingGravity
     const accelerationTreshold = (x ** 2 + y ** 2 + z ** 2) ** 0.5 < 3
 
