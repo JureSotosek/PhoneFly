@@ -2,7 +2,7 @@
 
 📱 PhoneFly is an InstanFacebook game(https://developers.facebook.com/docs/games/instant-games/) where the objective is to throw your phone as high as you can 😮 It can be played at 👉🏼https://fb.gg/play/phonefly
 
-👨‍👩‍👧‍👦With over **75,000 unique users**, it leverages the Facebook platfor to make it very easy to compete and challange your friends to a phone throwing battle 🔥
+👨‍👩‍👧‍👦 With over **75,000 unique users**, it leverages the Facebook platfor to make it very easy to compete and challange your friends to a phone throwing battle 🔥
 
 ## Development
 
