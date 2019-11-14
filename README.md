@@ -1,4 +1,4 @@
-# PhoneFly
+# PhoneFly 📱
 
 ## Development
 
