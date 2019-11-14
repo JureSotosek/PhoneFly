@@ -6,8 +6,8 @@
 
 ## Screenshots
 
-<img align="left" src="media/IndexPage.png" alt="Index Page" width="410">
-<img align="right" src="media/PlayPage.png" alt="Play Page" width="410">
+<img align="left" src="media/IndexPage.png" alt="Index Page" width="415">
+<img align="right" src="media/PlayPage.png" alt="Play Page" width="415">
 
 ## Development
 
