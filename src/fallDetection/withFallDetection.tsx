@@ -97,7 +97,7 @@ const withFallDetection = (
     public onFallEnded = (event: any) => {
       const { highestFallHeight, bestScore } = this.state
       const { FBInstant } = this.props
-      const { height, bigFall } = event
+      const { height } = event
 
       FBInstant.logEvent('throw', height, {
         height,
