@@ -1,12 +1,11 @@
 # PhoneFly
 
-## Instructions
+## Development
+
 
 The local developement experience is not that straight forward since for the game to work, you need access to `FBInstant` that can only be fatched from Facebook like this: https://developers.facebook.com/docs/games/instant-games/test-publish-share
 
 You also need to be logged in as a tester for the game to work.
-
-## Development
 
 To start the dev server run the dev command: `yarn dev`
 
