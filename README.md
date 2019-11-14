@@ -4,6 +4,11 @@
 
 👨‍👩‍👧‍👦 With over **75,000 unique users**, it leverages the Facebook platfor to make it very easy to compete and challange your friends to a phone throwing battle 🔥
 
+## Screenshots
+
+<img align="left" src="media/IndexPage.png" alt="Index Page" width="410">
+<img align="right" src="media/PlayPage.png" alt="Play Page" width="410">
+
 ## Development
 
 
