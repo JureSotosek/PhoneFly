@@ -1,0 +1,20 @@
+name: Deploy App To Facebook
+
+on:
+  push:
+    branches:
+      - '2.0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+          
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: yarn
+          
+      - name: Build App
+        run: |
+          cd packages/app
+          yarn build

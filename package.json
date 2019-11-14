@@ -1,0 +1,57 @@
+{
+  "name": "phonefly",
+  "version": "1.5.0",
+  "license": "MIT",
+  "homepage": "./",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "npm-run-all build --parallel dev:serve dev:open",
+    "dev:open": "open https://www.facebook.com/embed/instantgames/746821112354806/player?game_url=https://localhost:3000",
+    "dev:serve": "http-server ./build --ssl -C './certificates/cert.pem' -K './certificates/key.pem' -c-1 -p 3000 -a localhost",
+    "fmt": "prettier './**/*.{js,jsx,ts,tsx,css,scss,md,json,yml}'",
+    "fmt:check": "prettier --check './src/**/*.{js,jsx,ts,tsx,css,scss,md,json,yml}'",
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}' --fix --format verbose --project tsconfig.json",
+    "pre-commit": "npm-run-all lint fmt:check",
+    "upload": "npm-run-all build upload:zip",
+    "upload:zip": "zip -r build.zip build"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@types/jest": "24.0.22",
+    "@types/node": "^12.12.7",
+    "@types/react": "16.9.11",
+    "@types/react-dom": "16.9.4",
+    "@types/react-router-dom": "^5.1.2",
+    "@types/styled-components": "^4.4.0",
+    "http-server": "^0.11.1",
+    "husky": "^3.0.9",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.19.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.2.0",
+    "rewire": "^4.0.1",
+    "styled-components": "^4.4.1",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.5.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn pre-commit"
+    }
+  }
+}
