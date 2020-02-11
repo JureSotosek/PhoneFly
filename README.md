@@ -11,7 +11,6 @@
 
 ## Development
 
-
 The local developement experience is not that straight forward since for the game to work, you need access to `FBInstant` that can only be fatched from Facebook like this: https://developers.facebook.com/docs/games/instant-games/test-publish-share
 
 You also need to be logged in as a tester for the game to work.
@@ -29,3 +28,7 @@ yarn dev:open # Open the facebook url where you can test the app
 ```
 
 NOTE: If you are running the `yarn dev` command for the first time, after you have run `yarn dev`, you need to visit `https://localhost:3000` and verify the ssl ceritificates. In Chrome for example you need to press proceed. After that, return to the url from the `yarn dev:open` command and refresh.
+
+## Deploy
+
+To deploy run the upload command: `yarn upload`, this will generate a `build.zip` that you have to then manualy upload to the Facebook Developer portal.
